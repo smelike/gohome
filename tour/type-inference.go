@@ -2,7 +2,7 @@ package main
 
 import "fmt"
 
-func main() {
+func n_main() {
 	var i int
 	j := i // j is an int
 
@@ -11,5 +11,6 @@ func main() {
 	f := 3.142        // float
 	g := 0.867 + 0.5i // complex128
 
+	fmt.Printf("%v", 2i)
 	fmt.Printf("%T, %T, %T, %T", i, j, f, g)
 }
