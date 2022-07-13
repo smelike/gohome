@@ -12,10 +12,10 @@ In this example, we shortened
 to
 	x, y int */
 
-func add(x, y int) int {
+func e_add(x, y int) int {
 	return x + y
 }
 
-func main() {
-	fmt.Println("shortened: ", add(12, 43))
+func e_main() {
+	fmt.Println("shortened: ", e_add(12, 43))
 }
