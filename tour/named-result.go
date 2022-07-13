@@ -34,6 +34,6 @@ func split(sum int) (x, y int) {
 	return
 }
 
-func main() {
+func g_main() {
 	fmt.Println(split(27))
 }
