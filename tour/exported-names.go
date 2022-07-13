@@ -6,7 +6,7 @@ import (
 )
 
 // exported names
-func main() {
+func c_main() {
 	/*
 		a name is exported if it begins with a capital letter
 		For example, Pizza is an exported name, as is Pi, which is exported from the math package
