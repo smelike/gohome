@@ -9,7 +9,7 @@ The zero value is:
 	false for the boolean type, and
 	"" (the empty string) for strings
 */
-func main() {
+func l_main() {
 	var i int
 	var f float64
 	var b bool
