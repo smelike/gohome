@@ -1,0 +1,4 @@
+2022-07-08T13:51:18.543+0800	[34mINFO[0m	naming_client/push_receiver.go:80	udp server start, port: 55082
+2022-07-08T13:51:18.544+0800	[31mERROR[0m	cache/disk_cache.go:60	read cacheDir:D:\go\project\micro\cache\naming failed!err:open D:\go\project\micro\cache\naming: The system cannot find the path specified.
+2022-07-08T13:52:10.035+0800	[34mINFO[0m	naming_client/push_receiver.go:80	udp server start, port: 55692
+2022-07-08T13:52:10.036+0800	[31mERROR[0m	cache/disk_cache.go:60	read cacheDir:D:\go\project\micro\cache\naming failed!err:open D:\go\project\micro\cache\naming: The system cannot find the path specified.
