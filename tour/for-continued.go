@@ -2,7 +2,7 @@ package main
 
 import "fmt"
 
-func main() {
+func for_con_main() {
 	sum := 1
 	for sum < 1000 {
 		fmt.Println("\n", sum)
