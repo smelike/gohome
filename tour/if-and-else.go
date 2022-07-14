@@ -15,7 +15,7 @@ func pow(x, n, lim float64) float64 {
 	return lim
 }
 
-func main() {
+func if_and_else_main() {
 	fmt.Println(
 		pow(3, 2, 10),
 		pow(3, 3, 20),
