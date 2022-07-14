@@ -2,7 +2,7 @@ package main
 
 import "fmt"
 
-func main() {
+func test_main() {
 	// nil := "this is nil"
 	// fmt.Println(nil)
 	var slice []string = make([]string, 0, 12)
