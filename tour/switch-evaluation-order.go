@@ -6,7 +6,8 @@ import (
 )
 
 // evaluate cases from top to bottom, stopping when a case succeeds.
-
+// [Question]: what does it mean switch cases the values involved need not be integer?
+// switch i?
 func switch_order_main() {
 	fmt.Println("When's Saturday?")
 	today := time.Now().Weekday()
