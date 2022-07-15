@@ -5,8 +5,8 @@ import (
 	"runtime"
 )
 
-//  switch cases need not be constants, and the values invloved need not be integers
-func main() {
+//  switch cases need not be constants [cases], [values]and the values invloved need not be integers
+func switch_main() {
 	fmt.Print("Go runs on ")
 	// fmt.Println() -> mean print line
 
