@@ -3,6 +3,7 @@ package main
 import (
 	"context"
 	"fmt"
+	"runtime"
 
 	"github.com/go-redis/redis"
 )
@@ -10,6 +11,8 @@ import (
 var redisClient *redis.Client
 
 func main() {
+	fmt.Println(runtime.NumCPU())
+	fmt.Println(runtime.GOMAXPROCS(runtime.NumCPU()))
 	// ctx := context.TODO()
 	// connectRedis(ctx)
 

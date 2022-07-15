@@ -12,7 +12,7 @@ func Init() {
 
 	go func() {
 		jsonrpc := jsonrpc.GetJsonRpcInstance()
-		jsonrpc.Register("192.168.0.110", "8200")
+		jsonrpc.Register("192.168.0.171", "8200")
 	}()
 
 	router.Register("8100")

@@ -7,12 +7,15 @@ import (
 )
 
 func connect() {
-	rdb := redis.NewClient(&redis.Options{
-		PoolSize: 6,
-		Addr:     "localhost:6379",
-		Password: "",
-		DB:       0,
-	})
-
-	fmt.Printf("rdb is %v", rdb)
+	// var rdb []map[int]interface{}
+	for i := 0; i < 100; i++ {
+		client := redis.NewClient(&redis.Options{
+			Addr:     "localhost:6379",
+			Password: "",
+			DB:       i,
+		})
+		// fmt.Println("Number: %v \n", i)
+		fmt.Printf("Redis client: %v", client)
+	}
+	// fmt.Printf("rdb is %v", rdb)
 }

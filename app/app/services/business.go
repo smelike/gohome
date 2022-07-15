@@ -6,7 +6,8 @@ type BusinessService struct {
 }
 
 type Params struct {
-	a, b int
+	A int
+	B int
 }
 
 func (that *BusinessService) Get(params *Params, result *map[string]interface{}) error {

@@ -85,7 +85,7 @@ func (nacos *Nacos) CreateNamingClient(clientConfig constant.ClientConfig, serve
 //注册实例
 func (nacos *Nacos) registerInstance() {
 	_, err := nacos.namingClient.RegisterInstance(vo.RegisterInstanceParam{
-		Ip:          "192.168.0.110",
+		Ip:          "192.168.0.171",
 		Port:        8200,
 		ServiceName: "server_business",
 		Weight:      10,
