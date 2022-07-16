@@ -10,7 +10,7 @@ import "fmt"
 
 // The type []T is a slice with elements of type T.
 
-// A slice is formed by specifying two
+// A slice is formed by specifying two indices, a low and high bound, separated by a colon: a[low: high]
 
 // http://127.0.0.1:3999/moretypes/7
 
