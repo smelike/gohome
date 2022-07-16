@@ -15,7 +15,7 @@ func main() {
 	b := names[1:3]
 	fmt.Println(a, b)
 
-	b[0] = "XXX"
+	b[0] = "XXX" // b[0] equal to names[1];
 	fmt.Println(a, b)
 	fmt.Println(names)
 }
