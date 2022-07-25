@@ -2,7 +2,7 @@ package main
 
 import "fmt"
 
-func pointers_main() {
+func main() {
 	i, j := 42, 2701
 
 	p := &i         // point to i
