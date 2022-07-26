@@ -67,6 +67,8 @@ type Chatbot interface {
 	End() error
 }
 
+// 如何让 *myTalk 成为 Chatbot 接口的实现类型？
+
 func main() {
 	fmt.Println(talk)
 	// fmt.Printf("%v", talk)
