@@ -25,10 +25,20 @@ func printNumbers2() {
 		}(i)
 	}
 }
+
+func multiNumber() {
+	for i := 0; i < 5; i++ {
+		defer func(n int) {
+			fmt.Printf("%d", n)
+		}(i * 2)
+	}
+}
 func main() {
 	outerFunc()
 	fmt.Println("---delemeter-----")
 	printNumbers()
 	fmt.Println("---delemeter-----")
 	printNumbers2()
+	fmt.Println("----MultiNumber-----")
+	multiNumber()
 }
