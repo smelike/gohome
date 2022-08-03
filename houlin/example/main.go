@@ -7,7 +7,7 @@ import (
 	"os"
 	"runtime/debug"
 
-	"./chatbot"
+	"./chatbot" // module 的路径与引用问题
 )
 
 var chatbotName string
