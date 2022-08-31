@@ -12,5 +12,6 @@ func main() {
 	}()
 	time.Sleep(time.Millisecond)
 	name = "Harry"
+	// 要同时问候多个人，名单如下：names := []string{"Eric", "Robert", "Jim", "Mark"}
 	// runtime.Gosched()
 }
