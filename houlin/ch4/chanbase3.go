@@ -17,11 +17,14 @@ import (
 var strChan = make(chan string, 3)
 
 func main() {
+	// 通道
 	syncChan1 := make(chan struct{}, 1)
+	// 通道
 	syncChan2 := make(chan struct{}, 2)
 
+	// goroutine#1
 	go receive(strChan, syncChan1, syncChan2)
-
+	// goroutine#2
 	go send(strChan, syncChan1, syncChan2)
 
 	<-syncChan2
