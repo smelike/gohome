@@ -14,6 +14,7 @@ func main() {
 	sendingInterval := time.Second
 	receptionInterval := time.Second * 2
 	intChan := make(chan int, 0) // 非缓冲通道
+	// intChan := make(chan int, 5) // capSize =5 缓冲通道
 
 	// 发送操作
 	go func() {
@@ -53,3 +54,35 @@ Loop:
 	}
 	fmt.Println("End.")
 }
+
+/*
+
+// happen before
+
+缓冲通道
+Sent: 1
+Received: 1
+Sent: 2 [interval: 2 s]
+Received: 2 [interval: 2 s]
+Received: 3 [interval: 2 s]
+Sent: 3 [interval: 2 s]
+Received: 4 [interval: 2 s]
+Sent: 4 [interval: 2 s]
+Received: 5 [interval: 2 s]
+Sent: 5 [interval: 2 s]
+End.
+
+// 非缓冲通道
+Sent: 1
+Received: 1
+Received: 2 [interval: 2 s]
+Sent: 2 [interval: 2 s]
+Received: 3 [interval: 2 s]
+Sent: 3 [interval: 2 s]
+Received: 4 [interval: 2 s]
+Sent: 4 [interval: 2 s]
+Received: 5 [interval: 2 s]
+Sent: 5 [interval: 2 s]
+End.
+
+*/
