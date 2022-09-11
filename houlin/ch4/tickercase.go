@@ -38,8 +38,8 @@ func main() {
 		sum += e
 		if sum > 10 {
 			fmt.Printf("Got: %v\n", sum)
-			ticker.Stop() // 发现没有 End. [sender] 后添加的
-			// time.Sleep(time.Second)
+			ticker.Stop()               // 发现没有 End. [sender] 后添加的
+			time.Sleep(time.Second * 5) // 添加该行代码，原是以为 time.Ticker() 的 1s 定时导致 End. [sender] 未打印输出，结果未起作用
 			break
 		}
 	}
