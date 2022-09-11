@@ -5,6 +5,11 @@ import (
 	"time"
 )
 
+/*
+	思考：为什么总是打印不出 End. [sender] ?
+	使用了 ticker.Stop() 还是不出现 End. [sender]
+*/
+
 func main() {
 	intChan := make(chan int, 1)
 
@@ -18,7 +23,7 @@ func main() {
 	*/
 	ticker := time.NewTicker(time.Second)
 	go func() {
-		for _ = range ticker.C {
+		for _ = range ticker.C { // ticker.C 定时触发器
 			select { // 随机算法处理 case
 			case intChan <- 1: // 给 intChan 通道发送 1
 			case intChan <- 2: // 给 intChan 通道发送 2
@@ -33,8 +38,11 @@ func main() {
 		sum += e
 		if sum > 10 {
 			fmt.Printf("Got: %v\n", sum)
+			ticker.Stop() // 发现没有 End. [sender] 后添加的
+			// time.Sleep(time.Second)
 			break
 		}
 	}
+	// ticker.Stop() // 发现没有 End. [sender] 后添加的
 	fmt.Println("End. [receiver]")
 }
