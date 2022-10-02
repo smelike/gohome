@@ -67,7 +67,7 @@ func (comm *TCPComm) CheckResp(rawReq loadgenlib.RawReq, rawResp loadgenlib.RawR
 	commResult.Req = rawReq
 	commResult.Resp = rawResp
 	var sreq ServerReq
-	err := json.Unmarchal(rawReq.Req, &sreq)
+	err := json.Unmarshal(rawReq.Req, &sreq)
 	if err != nil {
 		commResult.Code = loadgenlib.RET_CODE_FATAL_CALL
 		commResult.Msg = fmt.Sprintf("Incorrectly formatted Req: %s!\n", string(rawReq.Req))
