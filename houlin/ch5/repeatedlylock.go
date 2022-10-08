@@ -1,5 +1,7 @@
 package main
 
+// 互斥锁的特性：该锁被锁后，只要还未被释放，则无法再次被锁。
+
 import (
 	"fmt"
 	"sync"
