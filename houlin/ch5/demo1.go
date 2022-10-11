@@ -103,14 +103,33 @@ func NewDataFile(path string, dataLen uint32) (DataFile, error) {
 *myDataFile 类型的 Read 方法，该方法应照如下步骤实现：
 
 1) 获取并更新 roffset;
+(多个读操作不能读取同一个数据块，且应按顺序读取文件中的数据块)
 2) 依据 roffset 从文件中读取一块数据;
+()
 3) 把该数据块封装成一个 Data 类型值，并将其作为结果值返回。
 */
 func (df *myDataFile) Read() (rsn int64, d Data, err error) {
-	d = &Data{
-		content: "",
+	// 读取并更新读偏移量
+	/*
+
+	 */
+	var offset int64
+	df.rmutex.Lock()
+	offset = df.roffset
+	df.roffset += int64(df.dataLen)
+	df.rmutex.Unlock()
+
+	// 读取一个数据块
+	rsn = offset / int64(df.dataLen)
+	df.fmutex.RLock()
+	defer df.fmutex.RUnlock()
+	bytes := make([]byte, df.dataLen)
+	_, err = df.f.ReadAt(bytes, offset)
+	if err != nil {
+		return
 	}
-	return math.MaxInt64, d, errors.New("Read data failed!")
+	d = bytes // 读取到的内容
+	return
 }
 
 /*
