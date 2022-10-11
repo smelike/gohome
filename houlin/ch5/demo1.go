@@ -100,12 +100,16 @@ func NewDataFile(path string, dataLen uint32) (DataFile, error) {
 // myDataFile 实现类型，实现 DataFile 接口中的 Read 函数
 /*
 *myDataFile 类型的 Read 方法，该方法应照如下步骤实现：
-
+0) 版本 0.5
 1) 获取并更新 roffset;
 (多个读操作不能读取同一个数据块，且应按顺序读取文件中的数据块)
 2) 依据 roffset 从文件中读取一块数据;
-()
+(读写锁)
 3) 把该数据块封装成一个 Data 类型值，并将其作为结果值返回。
+4)边界问题：
+当有 3 个 goroutine 进行读操作，2 个 goroutine 进行写操作时，
+即读操作 goroutine 多于 写操作 goroutine，那么读操作的偏移量最终会赶上写操作。
+
 */
 func (df *myDataFile) Read() (rsn int64, d Data, err error) {
 	// 读取并更新读偏移量
