@@ -2,7 +2,6 @@ package main
 
 import (
 	"errors"
-	"math"
 	"os"
 	"sync"
 )
@@ -162,26 +161,37 @@ func (df *myDataFile) Write(d Data) (wsn int64, err error) {
 	最后读取的数据块序列号
 */
 func (df *myDataFile) RSN() (rsn int64) {
-	return math.MaxInt64
+	// return math.MaxInt64
+	offset := df.roffset
+	rsn = offset / int64(df.dataLen) // 读操作的偏移量 【除以】数据块的长度
+	return
 }
 
 /*
 	最后写入的数据块的序列号
 */
 func (df *myDataFile) WSN() (wsn int64) {
-	return math.MaxInt64
+	// return math.MaxInt64
+	offset := df.woffset
+	wsn = offset / int64(df.dataLen) // 返回值类型已经被方法签名而声明了
+	return
 }
 
 /*
 	文件的数据块长度
 */
 func (df *myDataFile) DataLen() (dl uint32) {
-	return math.MaxUint32
+	// dl := df.dataLen // dl := 如此会报错
+	dl = df.dataLen
+	return
 }
 
 /*
 	关闭文件
 */
 func (df *myDataFile) Close() {
-
+	err := df.f.Close()
+	if err != nil {
+		return
+	}
 }
