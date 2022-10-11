@@ -107,7 +107,9 @@ func NewDataFile(path string, dataLen uint32) (DataFile, error) {
 3) 把该数据块封装成一个 Data 类型值，并将其作为结果值返回。
 */
 func (df *myDataFile) Read() (rsn int64, d Data, err error) {
-	d := &Data{}
+	d = &Data{
+		content: "",
+	}
 	return math.MaxInt64, d, errors.New("Read data failed!")
 }
 
