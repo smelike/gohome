@@ -158,19 +158,23 @@ func (df *myDataFile) Read() (rsn int64, d Data, err error) {
 */
 
 func (df *myDataFile) Write(d Data) (wsn int64, err error) {
-
+	var offset int64
 	df.wmutex.Lock()
-	offset := df.woffset
+	offset = df.woffset
 	df.woffset += int64(df.dataLen)
 	df.wmutex.Unlock()
 
 	wsn = offset / int64(df.dataLen) // 获取 write serial number （写入序列号）
+	var bytes []byte
 	// 写入内容
-	df.fmutex.Lock()
-	_, err = df.f.WriteAt(d, offset)
-	if err != nil {
-		return
+	if len(d) > int(df.dataLen) { // 写入内容长度大于数据长度时，截取
+		bytes = d[0:df.dataLen]
+	} else {
+		bytes = d
 	}
+	df.fmutex.Lock()
+	defer df.fmutex.Unlock()
+	_, err = df.f.Write(bytes)
 	return
 	// return math.MaxInt64, errors.New("Write data failed!") // just for demo
 }
