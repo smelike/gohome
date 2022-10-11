@@ -125,7 +125,7 @@ func (df *myDataFile) Read() (rsn int64, d Data, err error) {
 	// 读取一个数据块
 	rsn = offset / int64(df.dataLen) // 除以获得 read serial number??
 	df.fmutex.RLock()
-	defer df.fmutex.RUnlock()
+	defer df.fmutex.RUnlock() // defer 函数执行结束前调用
 	bytes := make([]byte, df.dataLen)
 	_, err = df.f.ReadAt(bytes, offset)
 	if err != nil {
