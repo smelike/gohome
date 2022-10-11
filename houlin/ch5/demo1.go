@@ -2,6 +2,7 @@ package main
 
 import (
 	"errors"
+	"io"
 	"os"
 	"sync"
 )
@@ -123,16 +124,23 @@ func (df *myDataFile) Read() (rsn int64, d Data, err error) {
 	df.rmutex.Unlock()
 
 	// 读取一个数据块
-	rsn = offset / int64(df.dataLen) // 除以获得 read serial number??
-	df.fmutex.RLock()
-	defer df.fmutex.RUnlock() // defer 函数执行结束前调用
+	rsn = offset / int64(df.dataLen)
 	bytes := make([]byte, df.dataLen)
-	_, err = df.f.ReadAt(bytes, offset)
-	if err != nil {
+	for { // version 2: for 死循环监听
+		df.fmutex.RLock()
+		_, err = df.f.ReadAt(bytes, offset)
+		if err != nil {
+			if err == io.EOF {
+				df.fmutex.RUnlock()
+				continue
+			}
+			df.fmutex.RUnlock()
+			return
+		}
+		d = bytes
+		df.fmutex.RUnlock()
 		return
 	}
-	d = bytes // 读取到的内容
-	return
 }
 
 /*
