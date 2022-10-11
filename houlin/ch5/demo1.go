@@ -120,7 +120,7 @@ func (df *myDataFile) Read() (rsn int64, d Data, err error) {
 	df.rmutex.Unlock()
 
 	// 读取一个数据块
-	rsn = offset / int64(df.dataLen)
+	rsn = offset / int64(df.dataLen) // 除以获得 read serial number??
 	df.fmutex.RLock()
 	defer df.fmutex.RUnlock()
 	bytes := make([]byte, df.dataLen)
@@ -135,13 +135,27 @@ func (df *myDataFile) Read() (rsn int64, d Data, err error) {
 /*
 	*myDataFile 类型的 Write 方法，实现步骤：
 
-	1) 获取并更行 woffset
+	1) 获取并更新 woffset
 	2) 依据 woffset 写入数据到文件
 	3) 返回数据块序列号
 */
 
 func (df *myDataFile) Write(d Data) (wsn int64, err error) {
-	return math.MaxInt64, errors.New("Write data failed!")
+
+	df.wmutex.Lock()
+	offset := df.woffset
+	df.woffset += int64(df.dataLen)
+	df.wmutex.Unlock()
+
+	wsn = offset / int64(df.dataLen) // 获取 write serial number （写入序列号）
+	// 写入内容
+	df.fmutex.Lock()
+	_, err = df.f.WriteAt(d, offset)
+	if err != nil {
+		return
+	}
+	return
+	// return math.MaxInt64, errors.New("Write data failed!") // just for demo
 }
 
 /*
