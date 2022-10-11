@@ -15,6 +15,7 @@ import (
 例如，第一个读操作读取了数据块 1，那第二个读操作读取数据块 2，以此类推。
 对于读操作是狗可并发进行，并不作要求。即使读是并发进行的，程序应分辨出它们的先后顺序。
 
+0.1 如何考虑【边界情况】？什么是【边界情况】？
 */
 
 /*
@@ -126,6 +127,11 @@ func (df *myDataFile) Read() (rsn int64, d Data, err error) {
 	// 读取一个数据块
 	rsn = offset / int64(df.dataLen)
 	bytes := make([]byte, df.dataLen)
+	/*
+		for 语句目的是，在 df.f.ReadAt 方法返回 io.EOF 时，继续尝试获取同一个数据块，直到获取成功为止。
+		【注意】：如果在该 for 代码块执行期间一直让读写锁 fmutex 处于读锁定状态，
+		那么针对它的写锁定操作将永远不会成功，且相应的 goroutine 也会一直阻塞。
+	*/
 	for { // version 2: for 死循环监听
 		df.fmutex.RLock()
 		_, err = df.f.ReadAt(bytes, offset)
