@@ -8,7 +8,8 @@ import (
 )
 
 /*
-0 案例：
+0 案例：文件的读写操作
+
 创建一个文件存放数据，同一时刻可能会由多个 goroutine 进行写操作和读操作。
 每次写操作写入若干字节，该若干字节的数据必须作为一独立的数据块存在。
 每次读操作从文件读取一个独立完整的数据块，读取的数据块不能重复，且需按顺序读取。
@@ -181,6 +182,7 @@ func (df *myDataFile) Write(d Data) (wsn int64, err error) {
 
 /*
 	最后读取的数据块序列号
+	步骤：调用互斥锁锁定读偏移量，计算 rsn 返回后，才解锁读偏移量。
 */
 func (df *myDataFile) RSN() (rsn int64) {
 	// return math.MaxInt64
@@ -192,6 +194,7 @@ func (df *myDataFile) RSN() (rsn int64) {
 
 /*
 	最后写入的数据块的序列号
+	步骤：锁定写偏移量，计算返回 wsn 后，解锁定写偏移量
 */
 func (df *myDataFile) WSN() (wsn int64) {
 	// return math.MaxInt64
