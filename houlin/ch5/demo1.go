@@ -184,9 +184,10 @@ func (df *myDataFile) Write(d Data) (wsn int64, err error) {
 */
 func (df *myDataFile) RSN() (rsn int64) {
 	// return math.MaxInt64
-	offset := df.roffset
-	rsn = offset / int64(df.dataLen) // 读操作的偏移量 【除以】数据块的长度
-	return
+	df.rmutex.Lock()
+	defer df.rmutex.Unlock()
+	return df.roffset / int64(df.dataLen) // 读操作的偏移量 【除以】数据块的长度
+
 }
 
 /*
@@ -194,9 +195,9 @@ func (df *myDataFile) RSN() (rsn int64) {
 */
 func (df *myDataFile) WSN() (wsn int64) {
 	// return math.MaxInt64
-	offset := df.woffset
-	wsn = offset / int64(df.dataLen) // 返回值类型已经被方法签名而声明了
-	return
+	df.rmutex.Lock()
+	defer df.rmutex.Unlock()
+	return df.woffset / int64(df.dataLen) // 返回值类型已经被方法签名而声明了
 }
 
 /*
