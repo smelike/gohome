@@ -68,6 +68,7 @@ type myDataFile struct {
 	wmutex  sync.Mutex   // 写操作用到的互斥锁
 	rmutex  sync.Mutex   // 读操作用到的互斥锁
 	dataLen uint32       // 数据块长度
+	rcond   *sync.Cond   // 条件变量，为改造边界情况，升级版本 v2 添加的
 }
 
 /*
@@ -96,6 +97,7 @@ func NewDataFile(path string, dataLen uint32) (DataFile, error) {
 		return nil, errors.New("Invalid data length!")
 	}
 	df := &myDataFile{f: f, dataLen: dataLen}
+	df.rcond = sync.NewCond(df.fmutex.RLocker()) // sync.RLocker() ——> 返回的是读写锁中的读锁
 	// 该return df 出会出现 error alert，因为 myDataFile 尚未实现 DataFile 接口
 	return df, nil
 }
@@ -133,19 +135,20 @@ func (df *myDataFile) Read() (rsn int64, d Data, err error) {
 		【注意】：如果在该 for 代码块执行期间一直让读写锁 fmutex 处于读锁定状态，
 		那么针对它的写锁定操作将永远不会成功，且相应的 goroutine 也会一直阻塞。
 	*/
+	df.fmutex.RLock()
+	defer df.fmutex.RUnlock()
 	for { // version 2: for 死循环监听
-		df.fmutex.RLock()
 		_, err = df.f.ReadAt(bytes, offset)
 		if err != nil {
 			if err == io.EOF {
-				df.fmutex.RUnlock()
+				df.rcond.Wait() // 改为使用条件变量，等待通知 <- df.fmutex.RUnlock()
 				continue
 			}
-			df.fmutex.RUnlock()
+			// df.fmutex.RUnlock()
 			return
 		}
 		d = bytes
-		df.fmutex.RUnlock()
+		// df.fmutex.RUnlock()
 		return
 	}
 }
@@ -176,6 +179,7 @@ func (df *myDataFile) Write(d Data) (wsn int64, err error) {
 	df.fmutex.Lock()
 	defer df.fmutex.Unlock()
 	_, err = df.f.Write(bytes)
+	df.rcond.Signal() // v2 发送通知，让读操作的 goroutine 进行唤醒等
 	return
 	// return math.MaxInt64, errors.New("Write data failed!") // just for demo
 }

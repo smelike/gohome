@@ -58,4 +58,25 @@ package main
 	和
 	func (*RWMutex) RLock() // 读操作-读锁定
 	func (*RWMutex) RUnlock() // 读操作-读解锁
+
+
+	#5.2 条件变量
+
+	Go 标准库中的 sync.Cond 类型代表了条件变量。
+
+	互斥锁的声明和创建：var mutex sync.Mutex
+	读写锁的声明和创建：var rwm sync.RWMutex
+
+	条件变量的声明和创建，需用到 sync.NewCond 函数，该函数声明如下：
+	func NewCond(l locker) *Cond
+
+	条件变量总要与互斥量组合使用。sync.NewCond 函数的唯一参数是 sync.Locker 类型的，
+	而具体的参数值既可是一个互斥锁(sync.Mutex)，也可为一个读写锁(sync.RWMutex)。
+
+	sync.NewCond 函数在被调用之后，会返回一个 *sync.Cond 类型的结果值，可调用该值拥有的几个方法来操纵这个条件变量。
+
+	*sync.Cond 类型的方法集合有 3 个方法，即：Wait、Signal 和 Broadcast。
+	意思分别是：等待通知、单发通知和广播通知的操作。
+
+
 */
