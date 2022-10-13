@@ -177,5 +177,17 @@ package main
 	有一个读操作被并发地进行了，这个读操作就可能会读取到一个只被修改了一半的数据。
 	这种结果是相当糟糕的。（读取到一个只被修改了一半的数据）
 
-	为了
+	为了原子地读取某个值，sync/atomic 代码包同样提供了一系列的函数，函数的名称都以  "Load"（意为"载入"）为前缀。
+	以针对 int32 类型值的函数为例：
+	func addValue(delta int32) {
+		for {
+			v := atomic.LoadInt32(&value)
+			if atomic.CompareAndSwapInt32(&value, v, (v + delta)) {
+				break
+			}
+		}
+	}
+
+	载入函数: sync/atomic.LoadInt32\aotmic.LoadInt64\atomic.LoadPointer
+	\atomic.LoadUint32\atomic.LoadUint64\atomic.LoadUintptr
 */
