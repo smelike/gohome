@@ -256,4 +256,18 @@ package main
 
 	原子值、原子函数
 
+
+
+*/
+
+/*
+	数组与切片的区别
+
+	primes := [6]int{2, 3, 5, 7, 11, 13} // array
+
+	var s []int = primes[1:4] // slice
+*/
+
+/*
+	测试竞态条件： go test -race
 */

@@ -31,12 +31,13 @@ type concurrentArray struct {
 	val    atomic.Value
 }
 
-// 用于创建整型数组值得 NewConcurrentArray 函数
+// 用于创建整型数组值的 NewConcurrentArray 函数
 // 创建一个 ConcurrentArray 类型值
 func NewConcurrentArray(length uint32) ConcurrentArray {
 	array := concurrentArray{}
 	array.length = length
 	// 存储在字段 val 中的是一个切片值，而不是数组值。
+	// mkae([]int, array.length) 创建的是切片，还是数组？
 	array.val.Store(make([]int, array.length))
 	return &array
 }
