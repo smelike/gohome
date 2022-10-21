@@ -5,6 +5,7 @@ import (
 	"io"
 	"os"
 	"sync"
+	"sync/atomic"
 )
 
 type Data []byte
@@ -46,11 +47,24 @@ func NewDataFile(path string, dataLen uint32) (DataFile, error) {
 
 func (df *myDataFile) Read() (rsn int64, d Data, err error) {
 	var offset int64
-	df.rmutex.Lock()
-	offset = df.roffset
-	df.roffset += int64(df.dataLen)
-	df.rmutex.Unlock()
-
+	/*
+		// 使用互斥锁的案例代码
+		df.rmutex.Lock()
+		offset = df.roffset
+		df.roffset += int64(df.dataLen)
+		df.rmutex.Unlock()
+	*/
+	// 使用原子函数
+	// 字段 roffset 和变量 offset 都是 int64 类型的，后者代表了前者的旧值。
+	// 而字段 roffset 的新值即其旧值与 dataLen 字段值的和。
+	for {
+		// 在 32 位计算架构的计算机上写入一个 64 位的整数，会存在并发安全方面的隐患
+		// offset = df.roffset
+		offset = atomic.LoadInt64(&df.roffset)
+		if atomic.CompareAndSwapInt64(&df.roffset, offset, (offset + int64(df.dataLen))) {
+			break
+		}
+	}
 	rsn = offset / int64(df.dataLen)
 	bytes := make([]byte, df.dataLen)
 	df.fmutex.RLock()
@@ -71,12 +85,20 @@ func (df *myDataFile) Read() (rsn int64, d Data, err error) {
 
 func (df *myDataFile) Write(d Data) (wsn int64, err error) {
 
+	// offset 是一个函数内的局部变量
 	var offset int64
-	df.wmutex.Lock()
-	offset = df.woffset
-	df.woffset += int64(df.dataLen)
-	df.wmutex.Unlock()
-
+	/*
+		df.wmutex.Lock()
+		offset = df.woffset
+		df.woffset += int64(df.dataLen)
+		df.wmutex.Unlock()
+	*/
+	for {
+		offset = atomic.LoadInt64(&df.woffset)
+		if atomic.CompareAndSwapInt64(&df.woffset, offset, (offset + int64(df.dataLen))) {
+			break // 更新更成功则跳出循环监听
+		}
+	}
 	// 写入
 	wsn = offset / int64(df.dataLen)
 	var bytes []byte
@@ -93,15 +115,18 @@ func (df *myDataFile) Write(d Data) (wsn int64, err error) {
 }
 
 func (df *myDataFile) RSN() (rsn int64) {
-	df.rmutex.Lock()
-	defer df.rmutex.Unlock()
-	return df.roffset / int64(df.dataLen)
+	// df.rmutex.Lock()
+	// defer df.rmutex.Unlock()
+	offset := atomic.LoadInt64(&df.roffset)
+	return offset / int64(df.dataLen)
 }
 
 func (df *myDataFile) WSN() (wsn int64) {
-	df.wmutex.Lock()
-	defer df.wmutex.Unlock()
-	return df.woffset / int64(df.dataLen)
+	// df.wmutex.Lock()
+	// defer df.wmutex.Unlock()
+	// return df.woffset / int64(df.dataLen)
+	offset := atomic.LoadInt64(&df.woffset)
+	return offset / int64(df.dataLen)
 }
 
 func (df *myDataFile) DataLen() uint32 {
