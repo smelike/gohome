@@ -25,8 +25,8 @@ type myDataFile struct {
 	rcond   *sync.Cond
 	woffset int64
 	roffset int64
-	wmutex  sync.Mutex
-	rmutex  sync.Mutex
+	// wmutex  sync.Mutex
+	// rmutex  sync.Mutex
 	dataLen uint32
 }
 
