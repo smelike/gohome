@@ -15,9 +15,9 @@ import "fmt"
 // http://127.0.0.1:3999/moretypes/7
 
 func main() {
-	primes := [6]int{2, 3, 5, 7, 11, 13}
+	primes := [6]int{2, 3, 5, 7, 11, 13} // array
 
-	var s []int = primes[1:4]
+	var s []int = primes[1:4] // slice
 
 	fmt.Println(s)
 }
