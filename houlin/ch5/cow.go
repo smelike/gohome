@@ -1,4 +1,4 @@
-package cow
+package main
 
 import (
 	"errors"
