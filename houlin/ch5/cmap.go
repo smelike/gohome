@@ -76,7 +76,7 @@ func (cmap *myConcurrentMap) Concurrency() int {
 }
 
 /*
-Pair 类型实际上是一个接口
+（1）Pair 类型实际上是一个接口
 Pair 接口首先嵌入了 linkedPair 接口，后者（linkedPair）是包级私有的，主要是为了保护
 一些需要接口化的方法，使之不被包外代码访问。实现 linkedPair 接口，可以让多个键-元素对
 形成一个单链表。
@@ -84,6 +84,26 @@ Pair 接口首先嵌入了 linkedPair 接口，后者（linkedPair）是包级�
 之所以有 Hash 方法，原因是：一个键-元素对值得键不可改变。因此，其键得散列值也是永不变得。
 因此，在创建键-元素对值的时候，先计算出这个散列值并存储起来以备后用。这样可以节省一些后续计算，提高效率。
 
+newPair 函数会产生一个 Pair 类型值，并在参数值不符合要求时返回错误。
+*pair 类型是 Pair 接口的实现类型，用于存储键值、键的散列值、元素值以及链向的下一个键-元素对值。
+
+unsafe.Pointer 类型，其实例可以代表一个可以寻址的值的指针值。
+指针的知识，可以通过阅读 unsafe 包的文档获取。
+对 unsafe.Pointer 类型的值是可以实施原子操作的。
+
+（2）有了 pair 类型的基本结构，newPair 函数就可以创建 Pair 类型值了。
+newPair 函数中调用的函数 hash，其功能是生成给定字符串的散列值。
+hash 函数的优劣会影响到键-元素对是否能均匀地分布到多个散列段及散列桶中。
+分布越均匀，并发安全字典的读写操作耗时也就越稳定。
+所以，在对并发安全字典进行性能调优，应优先考虑对 hash 函数的优化。
+
+（3）有 4 层封装，从下之上为：
+3.1 封装键-元素对的 Pair 接口的实现；
+3.2 封装 Pair 的单链表的 Bucket 接口的实现；
+3.3 封装 Bucket 切片的 Segment 接口的实现；
+3.4 封装 Segment 切片的 ConcurrentMap 接口的实现；
+
+// 实现获取（或迭代获取）全部键-元素对的方法？需要考虑哪些情况呢？
 
 */
 func (cmap *myConcurrentMap) Put(key string, element interface{}) (bool, error) {
