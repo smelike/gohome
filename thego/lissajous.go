@@ -7,7 +7,7 @@ import (
 	"io"
 	"math"
 	"math/rand"
-	"os"
+	"net/http"
 )
 
 var palette = []color.Color{color.White, color.Black}
@@ -18,15 +18,20 @@ const (
 )
 
 func main() {
-	lissajous(os.Stdout)
+	handler := func(w http.ResponseWriter, r *http.Request) {
+		lissajous(w)
+	}
+	http.HandleFunc("/", handler)
+	http.ListenAndServe("localhost:9000", nil)
 }
 
+// 输出到 os.Writer
 func lissajous(out io.Writer) {
 	const (
 		cycles  = 5
 		res     = 0.001
-		size    = 100
-		nframes = 64
+		size    = 600
+		nframes = 10
 		delay   = 8
 	)
 	freq := rand.Float64() * 3.0
