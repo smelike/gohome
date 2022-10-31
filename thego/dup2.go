@@ -43,3 +43,5 @@ func countLines(f *os.File, counts map[string]int) {
 		counts[input.Text()]++
 	}
 }
+
+// Exercise 1.4: Modify dup2 to print the names of all files in which each duplicated line occurs.
