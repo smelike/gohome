@@ -19,6 +19,14 @@ func PopCount(x uint64) int {
 		pc[byte(x>>(7*8))])
 }
 
+func PopCount2(x uint64) int {
+	var t int = 0
+	for i := 0; i < 8; i++ {
+		t += int(pc[byte(x>>(i*8))])
+	}
+	return t
+}
+
 /*
 Note that the range loop in init uses only the index; the value is unnecessary and thus
 need not be included.
