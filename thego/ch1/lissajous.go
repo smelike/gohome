@@ -19,20 +19,20 @@ const (
 
 func main() {
 	handler := func(w http.ResponseWriter, r *http.Request) {
-		lissajous(w)
+		lissajous(w, r)
 	}
 	http.HandleFunc("/", handler)
 	http.ListenAndServe("localhost:9000", nil)
 }
 
 // 输出到 os.Writer
-func lissajous(out io.Writer) {
+func lissajous(out io.Writer, r *http.Request) {
 	const (
-		cycles  = 5
+		cycles  = 1
 		res     = 0.001
-		size    = 600
-		nframes = 10
-		delay   = 8
+		size    = 400
+		nframes = 2
+		delay   = 200
 	)
 	freq := rand.Float64() * 3.0
 	anim := gif.GIF{LoopCount: nframes}
@@ -63,5 +63,10 @@ or blue component of the pixel.
 Exercise 1.6: Modify the Lissajous program to produce images in multiple colos by adding
 more values to palette and then displaying them by changing the third argument of
 SetColorIndex in some interesting way.
+
+Exercise 1.12: Modify the Lissajous server to read parameter values from the URL.
+For example, you might arrange it so that a URL like http://localhost:8000/?cycle=20 sets
+the number of cycles to 20 instead of the default 5. Use the strconv.Atoi function to convert
+the string parameter into an integer. You can see its documentation with go doc strconv.Atoi.
 
 */
