@@ -16,4 +16,7 @@ func main() {
 	....`
 
 	fmt.Println(GoUsage)
+
+	fmt.Println(string(0xfffd)) // the rune is invalid
+	fmt.Println(string(999999999))
 }
