@@ -27,4 +27,14 @@ func main() {
 	for i, r := range s {
 		fmt.Printf("%d\t%[2]q\t%[2]d\n", i, r)
 	}
+
+	n := 0
+
+	/* for _, _ = range s {
+		n++
+	} */
+	for range s {
+		n++
+	}
+	println(n)
 }
