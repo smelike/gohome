@@ -452,11 +452,13 @@ Reference types: pointers, slices, maps, functions, and channels, but what they 
 
 Go's binary operators for arithmetic, logic, and comparison are listed here in order of decreasing precedence:
 
-> * / % <<  >> & &^
-> + - | ^
-> == != < <= >  >=
-> &&
-> ||
+```
+ * / % <<  >> & &^
+ + - | ^
+ == != < <= >  >=
+ &&
+ ||
+```
 
 
 The remainder operator & applies only to integer.
@@ -542,6 +544,31 @@ func compute() (value float64, ok bool) {
 ```
 
 
+### 3.3 Complex Numbers
+
+Two sizes of complex numbers, complex64 and complex128.
+
+Built-in real and imag function extract those components:
+
+```
+var x complex128 = complex(1,2)
+var y complex128 = complex(3,4)
+fmt.Println(x*y)
+fmt.Println(real(x*y))
+fmt.Println(imag(x*y))
+```
 
 
+### 3.4 Booleans
+
+Boolean values can be combined with the && (AND) and || (OR) operators, which short-circuit behavior: if the answer is already determined by the value of the left operand, the right operand is not evaluated, making it safe to write expressions like this
+
+
+### 3.5 Strings
+
+A string is an immutable sequence of bytes.
+
+Text strings are conventionally interpreted as UTF-8-encoded sequences of Unicode code points (runes).
+
+The i-th byte of a string is not necessarily the i-th character of a string, because the UTF-8 encoding of a non-ASCII code point requires two or more bytes.
 

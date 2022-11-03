@@ -39,8 +39,8 @@ func handler(w http.ResponseWriter, r *http.Request) {
 	fmt.Fprintf(w, "<svg xmlns='http://www.w3.org/2000/svg' "+
 		"style='stroke:grey;fill: white;stroke-width:0.7' "+
 		"width='%d' height='%d'>", width, height)
-	for i := 0; i < cells; i++ {
-		for j := 0; j < cells; j++ {
+	for i := 0; i < cells; i++ { // 100
+		for j := 0; j < cells; j++ { // 100
 			ax, ay := corner(i+1, j)
 			bx, by := corner(i, j)
 			cx, cy := corner(i, j+1)
@@ -66,5 +66,25 @@ func corner(i, j int) (float64, float64) {
 
 func f(x, y float64) float64 {
 	r := math.Hypot(x, y) // distance from (0,0)
+	// saddle point https://en.wikipedia.org/wiki/Saddle_point
+	// r := math.Pow(x, 2) + math.Pow(y, 3)
 	return math.Sin(r) / r
 }
+
+/*
+Exercise 3.1: If the function f returns a non-finit float64 value, the SVG file will
+contain invalid <polygon> elements (although many SVG renders handle this gracefully).
+Modify the program to skip invalid polygons.
+
+Exercise 3.2: Experiment with visualization of other functions from the math package.
+Can you produce an egg box, moguls, or a saddle?
+
+
+Exercise 3.3: Color each polygon based on its height, so that the peaks are colored red
+(#ff0000) and the valleys blue(#0000ff).
+
+Excercise 3.4: Following the approach of the Lissajous example in Section 1.7, construct
+a web server that computes surface and writes SVG data to the client. The server must set
+the Content-Type header like this:
+w.Header().Set("Content-Type", "image/svg+xml")
+*/
