@@ -399,6 +399,148 @@ equivalent to
 
 
 
+localhost variable and short hand variable statment (:=)
+
+```
+var cwd string
+
+func init() {
+    cwd, err := os.Getwd() // compile error: unused: cwd
+    if err != nil {
+        log.Fatal("os.Getwd failed: %v", err)
+    }
+}
+```
+
+the := statement declares both of them(cwd, err) as local variables.
+
+
+```
+var cwd string
+
+func init() {
+    var err error
+    cwd, err = os.Getwd()
+
+    if err != nil {
+        log.Fatal("os.Getwd failed: %v", err)
+    }
+}
+```
+
+How packages, files, declarations, and statements express the structure of programs.
+
+## ch3 Basic Data Types
+
+(the structure of data.)
+
+Go's type fall into categories: basic types, aggregate types, reference types, and interface types.
+
+
+Basic types: numbers, strings, and booleans
+
+Aggregate types: arrays, structs, form more complicated data types by combining values of several simple ones.
+
+Reference types: pointers, slices, maps, functions, and channels, but what they have in common is that they all refer to program variables or state indirectly, so that the effect of ann operation applied to one reference is observed by all copies of that reference.
+
+### 3.1 Integer
+
+
+**rune** is an synonym for int32 and conventionally indicates that a value is a Unicode code point.
+
+**byte** is an synonym for uint8.
+
+Go's binary operators for arithmetic, logic, and comparison are listed here in order of decreasing precedence:
+
+> * / % <<  >> & &^
+> + - | ^
+> == != < <= >  >=
+> &&
+> ||
+
+
+The remainder operator & applies only to integer.
+
+In Go, the sign of the remainder is always the same as the sign of the dividend, so -5%3 and -5%-3 are both -2. (被除数（dividend）)
+
+Thre behavior of  / depends on whether its operands are integers, __so 5.0/4.0 is 1.25, but 5/4 is 1__ because integer division truncates the result toward zero.
+
+
+```
+var u uint8 = 255
+
+fmt.Println(u + 1, u*u) // 0 1
+
+// uint8: 0 ~ 255
+// 为什么 u*u 结果为 1 呢？
+
+```
+
+Two integeers of the same type may be compared using the binary comparison operators below; the type of a comparison expression is a boolean.
+
+ == equal to
+ != not equal to
+ < less than
+ <= less than or equal to
+ > greater than
+ >= greater than or equal to
+
+
+ [Unary operations] As unary operations have only one operand they are evaluated before other operations containing them.
+
+
+ Bitwise binary operators
+
+ &  bitwise AND
+ |  bitwise OR
+ ^  bitwise XOR
+ __&^ bitwise clear (AND NOT) ??__
+ << left shift
+ >> right shift
+
+ The operator ^ is bitwise exclusive OR (XOR) when used as a binary operator, but when used as a unary operator it is bitwise negation or complement; that is, it returns a value with each bit in its operand inverted.
+
+ The &^ operator is bit clear (AND NOT): in the expression `z=x &^ y`, each bit of z is 0 if the corresponding bit of y is 1; otherwise it equals the corresponding bit of x.
+
+ &^ 将运算符[左边数据]相异的位保留，相同位清零。（左操作数？）
+功能与 a&(^b) 相同。
+
+ ```
+fmt.Println(0&^0) // 0
+fmt.Println(0&^1) // 0
+fmt.Println(1&^0) // 1
+fmt.Println(1&^1) // 0
+ ``` 
+
+
+In general, an explicit conversion is required to convert a value from one type to another, and binary operators for arithmetic and logic (except shift) must have operands of the same type.
+
+
+
+### 3.2 Floating-Point Numbers
+
+A float32 provide approximately six decimal digits of precision, whereas a float64 provides about 15 digits.
+
+
+Any comparison with NaN yields false.
+
+> nan := math.NaN()
+
+(0/0 or Sqrt(-1))
+
+If a  function that returns a floating-point result might fail it's better to report the failure separately, likt this:
+
+```
+func compute() (value float64, ok bool) {
+    // ...
+
+    if failed {
+        return 0, false
+    }
+    return result, true
+}
+```
+
 
 
 
