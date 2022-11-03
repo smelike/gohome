@@ -572,3 +572,58 @@ Text strings are conventionally interpreted as UTF-8-encoded sequences of Unicod
 
 The i-th byte of a string is not necessarily the i-th character of a string, because the UTF-8 encoding of a non-ASCII code point requires two or more bytes.
 
+
+[task] The task is to take a string representation of an integer, such as "12345", and insert commas every three places, as in "12, 345". This version only works for integers; handling floating-point numbers is left as a exercise.
+
+<!-- gopl.io/ch3/comma -->
+
+```
+// comma inserts comma in a non-negative decimal integer string.
+
+func comma(s string) string {
+    if len(s) <= 3 {
+        return s
+    }
+
+    return comma(s[:n-3]) + "," + s[n-3:]
+}
+```
+<!-- handle floating-point numbers -->
+
+```
+func comma(s string) string {
+    if i := strings.Index(".")
+}
+```
+
+[WriteRune]**Appending the UTF-8 encoding of an arbitrary rune to a bytes.Buffer**, it's best to use __bytes.Buffer's WriteRune__.
+
+[WriteByte]bytes.Buffer's WriteByte is fine for ASCII characters.
+
+
+### 3.5.5 Conversions between Strings and Numbers
+
+- `strconv.Itoa` (integer to ASCII)
+
+```
+x := 123
+y := fmt.Sprintf("%d", x)
+fmt.Println(y, strconv.Itoa(x))
+
+```
+
+- `strconv.FormatInt(int64(x), 2)`
+
+explicit type, 明确的类型
+implicit type, 隐含的类型
+
+explicit, 明确的
+stated clearly and in detail, leaving no room for confusion or doubt.
+"the arrangement had not been made explicit"
+
+implicit, 隐含的
+
+composite type
+composite, 组合的？合成的？
+
+
