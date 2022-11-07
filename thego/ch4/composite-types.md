@@ -112,3 +112,70 @@ make([]T, len)
 make([]T, len, cap) // same as make([]T, cap)[:len]
 
 ```
+
+Updating the slice variable is required not just when calling append, but for any function that may change the length or capacity of a slice or make it refer to a different underlying array.
+
+To use slices correctly, it's important to bear in mind that although the elements of the underlying array are indirect, the slice's pointer, length, and capacity are not. 
+
+To update them requires an assignment like the one above. In this respect, slices are not "pure" reference types but resemble an aggregate type such as this struct:
+
+```
+type IntSlice struct {
+    ptr *int
+    length, cap int
+}
+```
+
+
+an array pointer ??
+
+
+### 4.3 Map
+
+`map[K]V`, where K and V are the types of its keys and values.
+
+All of the keys in a given map are of the same type, and all of the values are of the same type, but the keys need not be of the same type as the values.
+
+[the key type K's restrictions]: The key type K must be comparable using ==, so that the map can test whether a given key is equal to one already within it. Though floating-point numbers are comparable, it's a bad idea to compare floats for equality, especially bad if NaN if a posible value.
+
+[the value type V]: There  are no restrictions on the value type V.
+
+
+```
+ages := map[string]int{
+    "alice": 30,
+    "charlie": 34,
+}
+
+// ages := make(map[string]int)
+```
+
+[*] A map element is not a variable, and we cannot take its address:
+
+> _ = &ages["bob"] // compile error: cannnot take the address of map element
+
+[*] Storing to a nil map causes a panic:
+You must allocate the map before you can store into it.
+
+```
+var ages map[string]int // a nil map
+
+ages["bob"] = 90 // panic: assginment to entry in nil map
+
+```
+
+How to distinguish between a nonexistent element and an element that happens to have the value zero?
+
+[an nonexistent element and the zero value]
+
+```
+age, ok := ages["bob"]
+
+if !ok { /* not a key in this map; */}
+
+// two statements combined, like this
+
+if age, ok := ages["bob"]; !ok {
+    // not a key in this map
+}
+```
