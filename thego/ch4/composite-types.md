@@ -92,3 +92,23 @@ But for other type of slice, we must do the comparison ourselves.
 
 
 
+
+Whether a slice is empty, use len(s) == 0, not s == nil.
+
+```
+var s []int
+
+s = []int{} // s != nil
+s = nil
+s = []int(nil) // conversion expression 
+
+fmt.Println(s == nil)
+```
+
+The built-in function make creates a slice of specified element type, length, and capacity. The capacity argument may be omitted, in which case the capacity equals the length.
+
+```
+make([]T, len)
+make([]T, len, cap) // same as make([]T, cap)[:len]
+
+```

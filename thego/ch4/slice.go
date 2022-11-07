@@ -15,4 +15,13 @@ func main() {
 	endlessSummer := summer[:5] // equal to months[6:10]
 	fmt.Println(endlessSummer)
 	fmt.Println(Q2[0:9])
+
+	var s []int    // len(s) == 0, s == nil
+	s = nil        // len(s) == 0, s == nil
+	s = []int(nil) // len(s) == 0, s == nil
+	s = []int{}    // len(s) == 0, s != nil
+	fmt.Println(s, s == nil)
+
+	m := make([]int, 9)
+	fmt.Println(len(m), cap(m))
 }
