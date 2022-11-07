@@ -9,6 +9,10 @@ func main() {
 		fmt.Printf("%d cap=%d\t%v\n", i, cap(y), y)
 		x = y // 更新后的 y 赋值给 x，才能进行下一次的 append 操作
 	}
+
+	var runes []int = []int{12, 34, 56, 78, 90}
+	runes = append(runes, 2000)
+	fmt.Printf("%v\t length=%d\t cap=%d\n", runes, len(runes), cap(runes))
 }
 
 func appendInt(x []int, y int) []int {
