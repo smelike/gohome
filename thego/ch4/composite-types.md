@@ -162,6 +162,12 @@ var ages map[string]int // a nil map
 
 ages["bob"] = 90 // panic: assginment to entry in nil map
 
+ages == nil // true
+
+##2
+var ages = make(map[string]int) // it's a not nil map.
+ages == nil // false
+
 ```
 
 How to distinguish between a nonexistent element and an element that happens to have the value zero?
