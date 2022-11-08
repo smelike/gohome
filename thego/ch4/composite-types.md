@@ -179,3 +179,6 @@ if age, ok := ages["bob"]; !ok {
     // not a key in this map
 }
 ```
+
+
+The value type of a map itself be a composite type, such as a map or slice.
