@@ -21,7 +21,6 @@ func main() {
 	var counts = make(map[string]int)
 	// fmt.Println(counts == nil)
 	for _, filename := range os.Args[1:] {
-
 		f, err := os.Open(filename)
 		if err != nil {
 			fmt.Fprintf(os.Stderr, "%v\n", err)
@@ -41,5 +40,4 @@ func main() {
 	for k, c := range counts {
 		fmt.Printf("%s\t\t\t%d\n", k, c)
 	}
-
 }

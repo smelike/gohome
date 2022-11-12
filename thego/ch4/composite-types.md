@@ -188,3 +188,236 @@ if age, ok := ages["bob"]; !ok {
 
 
 The value type of a map itself be a composite type, such as a map or slice.
+
+```
+var graph = make(map[string]map[string]bool)
+
+func addEdge(from, to string) {
+    edges := graph[from]
+    if edges == nil {
+        edges = make(map[string]bool)
+        graph[from] = edges
+    }
+    edges[to] = true
+}
+
+func hasEdge(from, to string) bool {
+    return graph[from][to]
+}
+```
+
+### 4.4 structs
+
+A struct is an aggregate data type that groups together zero or more named values of arbitrary
+types as a single entity.
+
+[A struct -> an aggregate data type - groups together zero or more named values of arbitrary types as a single entity.]
+
+Each value is called a field.
+
+The classic example of a struct from data processing is the employee record, whose fields are a unique ID, the employee's name, address, date of birth, position, salary, manager, and the like.
+[from data processing - a unique ID, name, address, date of birth, position, salary, manager, and the like]
+
+All of these fields are collected into a single entity that can be copied as a unit, pass to functions and returned by them, stored in arrays, and so on.
+
+These two statements declare a struct type called `Employee` and a variable called `dilbert` that is an instance of an Employee:
+
+```
+type Employee struct {
+    ID int
+    Name string
+    Address string
+    DoB time.Time
+    Position string
+    Salary int
+    ManagerID int
+}
+
+var dilbert Employee
+
+```
+
+The zero value of a struct is composed of the zero valuees of each of its fields. It is usually desirable that the zero value be a natural or sensible default. For example, in bytes.Buffer, the initial value of the struct is a ready-to-use empty buffer, and the zero value of sync.Mutex is a ready-to-use unlocked mutex. Sometimes this sensible initial behavior happens for free, but sometimes the type designer has to work at it.
+
+The struct type with no fields is called the empty struct, written struct{}. It has size zero and carries no information but may be useful nonetheless. Some Go programmers use it instead of bool as the value type of a map that represents a set, to emphasize that only the keys are significant, but the space saving is marginal and the syntax more cumbersome, so we generally avoid it.
+
+`empty struct: struct{}`, no fileds.
+
+```
+// the key type is string, the value type is empty struct.
+seen := make(map[string]struct{}) 
+
+// ...
+if _, ok := seen[s]; !ok {
+    seen[s] = struct{}{}
+    // ... first time seeing s...
+}
+```
+
+### 4.4.1 Struct Literals
+
+A value of a struct type can be written using a struct literal that specifies values for its fields.
+
+```
+type Point struct { X, Y int }
+p := Point{1, 2}
+
+```
+
+There are two forms of struct literal. The first form, shown above, requires that a value be specified for every field, in the right order.
+
+It burdens the writer (and reader) with remembering exactly what the fields are, and it makes the code fragile should the set of fields later grow or be reordered.
+
+Accordingly, this form tends to be used only within the package that defines the struct type, or with smaller struct type for which there is an obvious field ordering convention, like `image.Point{x, y}` or `color.RGBA{red, green, blue, alpha}`.
+
+[within the package that defines the struct type; 
+smaller struct type for which there is an obvious field ordering convention]
+
+
+The second form is used, in which a struct value is initialized by listing some or all of the field names and their corresponding values.
+For example, `anim := gif.GIF{LoopCount: nframes}`.
+
+If a field is omitted in this kind of literal, it is set to the zero value for its type. Because names are provided, the order of fields doesn't matter.
+
+
+The two forms cannot be mixed in the same literal. Nor can you use the (order-based) first form of literal to sneak around the rule that `unexported identifiers` may not be referred to from another package.
+
+```
+package p
+typpe T struct{a, b int} // a and b are not exported
+
+package q
+import "p"
+
+var _ = p.T{a: 1, b:2}  // compile error: can't reference a, b
+var _ = p.T{1, 2}   // compile error: can't reference a, b
+
+```
+
+Struct values can `be passed as arguments` to functions and returned from them. For instance, this function scales a `Point` by a specified factor:
+
+```
+func Scale(p Point, factor int) Point {
+    return Point{p.X * factor, p.Y * factor}
+}
+fmt.Println(Scale(Point{1,  2}, 5))
+```
+
+
+For efficiently, larger struct type are usually passed to or returned from functions indirectly using a pointer,
+
+Since in a `call-by-value` language like Go, the called function receives only a copy of an argument, not a reference to the original argument.
+
+
+Shorthand notation to create and initialize a struct variable and obtain its address:
+
+`pp := &Point{12, 4}` it is exactly equivalent to 
+
+```
+pp := new(Point)
+*pp = Point{1, 2}
+```
+
+`&Point{1, 2}` can be used directly within an expression, such as a function call.
+
+
+### 4.4.2 Comparing Structs
+
+[Definition]If all the fields of a struct are comparable, the struct itself is comparable.
+
+
+`==` operation compares the corresponding fields of the two structs in order.
+
+Comparable struct types, like other comparable types, may be used as the key type of a map.
+
+```
+type address struct {
+    hostname string
+    port int
+}
+
+hits := make(map[address]int)
+hits[address{"golabg,org", 443}]++
+```
+
+
+### 4.4.3 Struct Embeding and Anonymous Fields
+
+Struct embedding mechanism lets us use one named struct type as an anonymous field of another struct type, providing a convenient syntactic shortcut so that a simple dot expression like `x.f` can stand for a chain of fields like `x.d.e.f`.
+
+Consider a 2-D drawing program that provides a library of shapes, such as rectangles, ellipses, stars, and wheels. Here are two of the types it might define:
+
+```
+type Circle struct {
+    X, Y, Radius int
+}
+
+type Wheel struct {
+    X, Y, Radius, Spokes int
+}
+```
+
+A circle has fields for the X and Y coordinates of its center, and a Radius. A wheel has all the features of a Circle, plus Spokes, the number of inscribed radial spokes. Let's create a wheel:
+
+```
+var w wheel
+w.X = 8 // this is statement, not declaration
+w.Y = 8 // the same as above
+w.Radius = 5
+w.Spokes = 20
+
+```
+
+As the set of shapes grows, we're bound to notice similarities and repetition among them, so it may be convenient to factor out their common parts:
+
+```
+type Point struct {
+    X, Y int
+}
+
+type Circle struct {
+    Center Point
+    Radius int
+}
+
+type Wheel struct {
+    Circle Circle
+    Spokes int
+}
+
+```
+
+[Anonymoua fields] Declare a field with a type but no name; such field are called anonymous fields. The type of the field must be a named type or a pointer to a named type.
+[A named type or a pointer to a named type]
+
+[intervening name, 中间名]refer to the names at the leaves of the implicit tree without giving the intervening names:
+
+`w.X = 42 // instead of w.Circle.Point.X`
+
+> fmt.Printf("%#v\n", w)
+
+Notice how the `# adverb` causes Printf's %v to display values in a form similar to Go syntax. For struct values, this form includes the name of each field.
+
+[two anonymous fiels of the same type-conflict]Because "anonymous" fields do have implicit names, you can't have `two anonymous fields of the same type` since their names would conflict. And because the name of the field is implicitly determined by its type, so too is the visibility of the field. In the examples above, the Point and Circle anonymous fields are exported. Had they been unexported (point and circle), we could still use the shorthand form
+
+`w.X = 8 // equivalent to w.circle.point.X = 8`
+
+but the explicit long form shown in the comment would be forbidden outside the declaring package because circle and point would be inaccessible.
+
+What we've seen so far of struct embedding is just a sprinkling of syntactic sugar on the dot notation used to select struct fields. Later, we'll see that anonymous fields need not be struct types; any named type or pointer to a named type will do. But why would you want to embed a type that has no subfields?
+
+[the outer struct type gains not just the fields of the embedded type but its methods too.]The answer has to do with methods. The shorthand notation used for selecting the fields of an embedded type works for selecting its methods as well. In effect, **the outer struct type gains not just the fields of the embedded type but its methods too**. This mechanism is the main way that complex object behaviors are composed from simpler ones. Compisition is central to object-oriented programming in Go.
+
+
+
+### 4.5 JSON
+
+JavaScript Object Notation (JSON) is a standard notation for sending and receiving structured information.
+
+Go has excellent support for encoding and decoding these formats, provided by the standard library package encoding/json, encoding/xml, encoding/asn1, and so on, and these packages all have similar APIs.
+
+
+JSON is an encoding of JavaScript values - strings, numbers, booleans, arrays, and objects - as Unicode text. It's an efficient yet readable representation for the basic data types of Chapter 3 and the composite types of this chapter - arrays, slices, structs, and maps.
+
+[**]JSON's \Uhhhh numeric escapes denote UTF-16 codes, not runes.
+
