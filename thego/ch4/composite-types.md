@@ -421,3 +421,26 @@ JSON is an encoding of JavaScript values - strings, numbers, booleans, arrays, a
 
 [**]JSON's \Uhhhh numeric escapes denote UTF-16 codes, not runes.
 
+
+- json.Marshal
+
+- json.MarshalIndent
+
+Only exported fields are marshaled.
+
+The field tags, a field tag is a string of metadata associated at compile time with the field of a struct:
+
+```
+Year int `json:"released"`
+Color bool `json:"color,omitempty"`
+
+```
+A field tag may be any literal string, but it is conventionally interpreted as a space-separated list of key:"value" pairs since they contain double quotation marks, field tags are usually written with raw string literals. 
+
+The json key controls the behavior of the encoding/json package, and other enconding/... packages follow this convention.
+
+The first part of the json field tag specifies an alternative JSON name for the Go field. Field tags are often used to **specify an idiomatic JSON name like total_count** for a Go field named TotalCount.
+
+The tag for Color has an additional option, omitempty, which indicates that no JSON output should be produced if the field has the zero value for its type (false, here) or is otherwise empty. Sure enough, the JSON output for Casablanca, a black-and-white movie, has no color field.
+
+
