@@ -65,13 +65,11 @@ func GenerateIndex() (*MatchResult, error) {
 			resp.Body.Close()
 			return nil, fmt.Errorf("request failed: %s ", url)
 		}
-
-		// var result MatchResult
 		if err := json.NewDecoder(resp.Body).Decode(&comic); err != nil {
 			resp.Body.Close()
-			// return nil, err
 			continue
 		}
+		// 如果使用无限循环 for {}, 何时代表结束循环呢？
 		result = append(result, comic)
 		resp.Body.Close()
 	}
