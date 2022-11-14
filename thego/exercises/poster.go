@@ -81,7 +81,6 @@ func main() {
 	if err != nil {
 		fmt.Printf("error: %s", err)
 	}
-	// fmt.Println(movie)
 	/* for _, rate := range movie.Ratings {
 		fmt.Printf("%s \t %s\n", rate.Source, rate.Value)
 	} */
@@ -89,13 +88,13 @@ func main() {
 	p := movie.Poster
 	fileName := movie.Title + p[strings.LastIndex(p, "."):]
 
-	err = downloadPost(movie.Poster, fileName)
+	err = downloadFile(movie.Poster, fileName)
 	if err == nil {
 		fmt.Printf("download %s poster successfully\n", movie.Title)
 	}
 }
 
-func downloadPost(url, fileName string) error {
+func downloadFile(url, fileName string) error {
 	resp, err := http.Get(url)
 
 	if err != nil {
@@ -118,8 +117,8 @@ func downloadPost(url, fileName string) error {
 }
 func SearchMovie(terms []string) (*Movie, error) {
 
-	/* query escape: http://www.omdbapi.com/
-	?apikey=953924d6&t%3Dinventing+the+abbotts%26plot%3Dfull
+	/* query escape:
+	http://www.omdbapi.com/?apikey=953924d6&t%3Dinventing+the+abbotts%26plot%3Dfull
 	*/
 	// q := url.QueryEscape(strings.Join(terms, "&"))
 	q := strings.Join(terms, "&")
@@ -128,7 +127,6 @@ func SearchMovie(terms []string) (*Movie, error) {
 	if err != nil {
 		log.Fatal(fmt.Printf("search movies failed: http get %s\n", err))
 	}
-	// fmt.Println(resp.StatusCode)
 	if resp.StatusCode != http.StatusOK {
 		resp.Body.Close()
 		return nil, fmt.Errorf("Search movies response error")
