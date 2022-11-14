@@ -3,8 +3,10 @@ package main
 import (
 	"encoding/json"
 	"fmt"
+	"io"
 	"log"
 	"net/http"
+	"os"
 	"strings"
 )
 
@@ -62,6 +64,7 @@ type Movie struct {
 	Actors   string
 	Plot     string
 	Ratings  []rating
+	Response bool `json:"exist,omitempty"`
 }
 
 type rating struct {
@@ -78,16 +81,45 @@ func main() {
 	if err != nil {
 		fmt.Printf("error: %s", err)
 	}
-	for _, rate := range movie.Ratings {
+	// fmt.Println(movie)
+	/* for _, rate := range movie.Ratings {
 		fmt.Printf("%s \t %s\n", rate.Source, rate.Value)
+	} */
+
+	p := movie.Poster
+	fileName := movie.Title + p[strings.LastIndex(p, "."):]
+
+	err = downloadPost(movie.Poster, fileName)
+	if err == nil {
+		fmt.Printf("download %s poster successfully\n", movie.Title)
 	}
 }
 
+func downloadPost(url, fileName string) error {
+	resp, err := http.Get(url)
+
+	if err != nil {
+		fmt.Printf("image not exist")
+		return err
+	}
+	defer resp.Body.Close()
+
+	f, _ := os.Create(fileName)
+	if err != nil {
+		return err
+	}
+	defer f.Close()
+
+	_, err = io.Copy(f, resp.Body)
+	if err != nil {
+		return err
+	}
+	return nil
+}
 func SearchMovie(terms []string) (*Movie, error) {
 
 	/* query escape: http://www.omdbapi.com/
 	?apikey=953924d6&t%3Dinventing+the+abbotts%26plot%3Dfull
-
 	*/
 	// q := url.QueryEscape(strings.Join(terms, "&"))
 	q := strings.Join(terms, "&")
