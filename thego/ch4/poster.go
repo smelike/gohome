@@ -5,7 +5,6 @@ import (
 	"fmt"
 	"log"
 	"net/http"
-	"net/url"
 	"strings"
 )
 
@@ -79,13 +78,20 @@ func main() {
 	if err != nil {
 		fmt.Printf("error: %s", err)
 	}
-	fmt.Println(movie.Title, movie.Poster)
+	for _, rate := range movie.Ratings {
+		fmt.Printf("%s \t %s\n", rate.Source, rate.Value)
+	}
 }
 
 func SearchMovie(terms []string) (*Movie, error) {
 
-	q := url.QueryEscape(strings.Join(terms, "&"))
+	/* query escape: http://www.omdbapi.com/
+	?apikey=953924d6&t%3Dinventing+the+abbotts%26plot%3Dfull
 
+	*/
+	// q := url.QueryEscape(strings.Join(terms, "&"))
+	q := strings.Join(terms, "&")
+	fmt.Println(Omdb_URL + q)
 	resp, err := http.Get(Omdb_URL + q)
 	if err != nil {
 		log.Fatal(fmt.Printf("search movies failed: http get %s\n", err))
