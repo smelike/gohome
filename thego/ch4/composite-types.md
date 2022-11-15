@@ -444,3 +444,25 @@ The first part of the json field tag specifies an alternative JSON name for the 
 The tag for Color has an additional option, omitempty, which indicates that no JSON output should be produced if the field has the zero value for its type (false, here) or is otherwise empty. Sure enough, the JSON output for Casablanca, a black-and-white movie, has no color field.
 
 
+### 4.6. Text and HTML Templates
+
+The previous example does only the simplest possible formatting, for which `Printf` is entirely adequate. But sometimes formatting must be more elaborate, and it's desirable to separate the format from the code more completely. This can be done with the text/template and html/template packages, which provide a mechanism for **substituting** the values of variables into a text or HTML template.
+
+A template is a string or file one or more portions enclosed in double braces, `{{...}}`, called actions. Most of the string is printed literally, but the actions trigger other behaviors.
+
+Each action contains an expression in the template language, a simple but powerful notation for printing values, selecting struct fields, calling functions and methods, expressing control flow such as if-else statements and range loops, and instantitating other templates.
+
+A simple template string is shown below:
+
+```
+> issuereport
+
+const templ = `{{.TotalCount}} issues
+{{range .Items}}------------------------------
+Number: {{.Number}}
+User:   {{.User.Login}}
+Title:  {{.Title | printf "%.64s"}}
+Age:    {{.CreateedAt | daysAgo}} days
+{{end}}`
+
+```

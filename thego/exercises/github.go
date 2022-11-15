@@ -55,11 +55,15 @@ func main() {
 	}
 	fmt.Printf("%d issues: \n", result.TotalCount)
 	for _, item := range result.Items {
-		fmt.Printf("#%-5d [%9.9s] %.55s %v\n",
-			item.Number, item.User.Login, item.Title, item.CreatedAt)
+		fmt.Printf("#%-5d [%9.9s] %.55s (%v days ago)\n",
+			item.Number, item.User.Login,
+			item.Title, daysAgo(item.CreatedAt))
 	}
 }
 
+func daysAgo(t time.Time) int {
+	return int(time.Since(t).Hours() / 24)
+}
 func SearchIssues(terms []string) (*IssueSearchResult, error) {
 	q := url.QueryEscape(strings.Join(terms, " "))
 	// q := strings.Join(terms, "&")

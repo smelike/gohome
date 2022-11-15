@@ -2,6 +2,7 @@ package main
 
 import (
 	"encoding/json"
+	"flag"
 	"fmt"
 	"io"
 	"log"
@@ -72,8 +73,17 @@ type rating struct {
 	Value  string
 }
 
-func main() {
+var n = flag.String("name", "", "a movie name")
+var p = flag.String("plot", "short", "movie's plot")
 
+func main() {
+	flag.Parse()
+
+	// fmt.Println(flag.Args())
+	// fmt.Println(*n)
+	if len(strings.TrimSpace(*n)) == 0 {
+		log.Fatal(fmt.Println("movie name can not be empty"))
+	}
 	movie, err := SearchMovie([]string{
 		"t=inventing the abbotts",
 		"plot=full",
