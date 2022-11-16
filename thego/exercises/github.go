@@ -78,9 +78,9 @@ var report = template.Must(template.New("issuelist").
 func main() {
 	var terms []string = []string{
 		"repo:golang/go",
+		"type:issue",
 		"3133",
 		"10535",
-		"type:issue",
 	}
 	// terms = append(terms, "repo:MixinNetwork/mixin", "type:issue")
 	// fmt.Printf("%v\t%[1]T", terms)

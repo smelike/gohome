@@ -506,3 +506,8 @@ func main() {
 
 **html/template** and **text/template**
 
+> go doc text/template
+
+> go doc html/template
+
+
