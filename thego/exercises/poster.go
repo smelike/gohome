@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"flag"
 	"fmt"
+	"html/template"
 	"io"
 	"log"
 	"net/http"
@@ -76,11 +77,32 @@ type rating struct {
 var n = flag.String("name", "", "a movie name")
 var p = flag.String("plot", "short", "movie's plot")
 
+var templ = template.Must(template.New("movie").Parse(`
+<h1>{{.Title}}</h1>
+<table>
+	<tr style="text-align: left">
+		<th>Poster</th>
+		<th>Detail</th>
+		<th>Plot</th>
+	</tr>
+	<tr style="text-align: center">
+		<td><img src='{{.Poster}}' /></td>
+		<td>{{.Genre}}/{{.Director}}/{{.Language}}/{{.Country}}/{{.Actors}}</td>
+		<td>{{.Plot}}</td>
+	</tr>
+	{{range .Ratings}}
+	<tr>
+		<td>#</td>
+		<td>{{.Source}}</td>
+		<td>{{.Value}}</td>
+	</tr>
+	{{end}}
+</table>
+`))
+
 func main() {
 	flag.Parse()
 
-	// fmt.Println(flag.Args())
-	// fmt.Println(*n)
 	if len(strings.TrimSpace(*n)) == 0 {
 		log.Fatal(fmt.Println("movie name can not be empty"))
 	}
@@ -90,6 +112,9 @@ func main() {
 	})
 	if err != nil {
 		fmt.Printf("error: %s", err)
+	}
+	if err = templ.Execute(os.Stdout, movie); err != nil {
+		log.Fatal(err)
 	}
 	/* for _, rate := range movie.Ratings {
 		fmt.Printf("%s \t %s\n", rate.Source, rate.Value)

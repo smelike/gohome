@@ -3,9 +3,11 @@ package main
 import (
 	"encoding/json"
 	"fmt"
+	"html/template"
 	"log"
 	"net/http"
 	"net/url"
+	"os"
 	"strings"
 	"time"
 )
@@ -38,12 +40,46 @@ type User struct {
 	HTMLURL string `json:"html_url"`
 }
 
+var report = template.Must(template.New("issuelist").Parse(`
+<h1>{{.TotalCount}} issues</h1>
+<table>
+	<tr style='text-align: left'>
+		<th>#</th>
+		<th>State</th>
+		<th>User</th>
+		<th>Title</th>
+	</tr>
+	{{range.Items}}
+	<tr>
+		<td><a href='{{.HTMLURL}}'>{{.Number}}</td>
+		<td>{{.State}}</td>
+		<td><a href='{{.User.HTMLURL}}'>{{.User.Login}}</a></td>
+		<td><a href='{{.HTMLURL}}'>{{.Title}}</td>
+	</tr>
+	{{end}}
+</table>
+`))
+
+/* const templ = `{{.TotalCount}} issues:
+{{range .Items}}-----------------------------------------------------
+Number: {{.Number}}
+User:	{{.User.Login}}
+Title:	{{.Title | printf "%.64s"}}
+Age:	{{.CreatedAt | daysAgo}} days
+{{end}}`
+
+var report = template.Must(template.New("issuelist").
+	Funcs(template.FuncMap{"daysAgo": daysAgo}).
+	Parse(templ)) */
+
 /*
  repo:mixin -> search query failed: 422 Unprocessable Entity
 */
 func main() {
 	var terms []string = []string{
-		"repo:MixinNetwork/mixin",
+		"repo:golang/go",
+		"3133",
+		"10535",
 		"type:issue",
 	}
 	// terms = append(terms, "repo:MixinNetwork/mixin", "type:issue")
@@ -53,11 +89,14 @@ func main() {
 	if err != nil {
 		log.Fatal(err)
 	}
-	fmt.Printf("%d issues: \n", result.TotalCount)
+	/* fmt.Printf("%d issues: \n", result.TotalCount)
 	for _, item := range result.Items {
 		fmt.Printf("#%-5d [%9.9s] %.55s (%v days ago)\n",
 			item.Number, item.User.Login,
 			item.Title, daysAgo(item.CreatedAt))
+	} */
+	if err := report.Execute(os.Stdout, result); err != nil {
+		log.Fatal(err)
 	}
 }
 

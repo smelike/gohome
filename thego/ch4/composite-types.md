@@ -466,3 +466,43 @@ Age:    {{.CreateedAt | daysAgo}} days
 {{end}}`
 
 ```
+
+A type may control its string formatting by defining certain methods, a type may also define methods to control is JSON marshaling and unmarshaling behavior. The JSON-marshaled value of a time.Time is a string in a standard format.
+
+Producing output with a template is a two-step process. First we must **parse the template into a suitable internal representation**, and then execute it on specific inputs. Parsing need be done only once. The code below creates and parses the template templ defined above. Note the chaining of method calls: **template.New** creates and returns a template; **Funcs** adds daysAgo to the set of functions accessible within this template, then returns that template; finally, **Parse** is called on the result.
+
+```
+report, err := template.New("report").
+    Funcs(template.FuncMap{"daysAgo": daysAgo}).
+    Parse(templ)
+
+if err != nil {
+    log.Fatal(err)
+}
+```
+
+[failure-to-parse-a-template-indicates-a-fatal-bug]Because templates are usually fixed at compile time, failure to parse a template indicates a fatal bug in the program.
+[templates-are-usually-fixed-at-compile-time]
+
+[template.Must] The template.Must helper function makes error handling more convenient: it accepts a template and an error, checks that error is nil (and panics otherwise), and then returns the template.
+
+Once the template has been created, augmented with daysAgo, parsed, and checked, we can execute it using a github.IssueSearchResult as the data source and os.Stdout as the destination:
+
+```
+var report = template.Must(template.New("issuelist").
+Funcs(template.FuncMap{"daysAgo": daysAgo}).
+Parse(templ))
+
+func main() {
+    result, err := github.SearchIssue(os.Args[1:])
+    if err != nil {
+        log.Fatal(err)
+    }
+    if err := report.Execute(os.Stdout, result); err != nil {
+        log.Fatal(err)
+    }
+}
+```
+
+**html/template** and **text/template**
+
