@@ -5,7 +5,7 @@ import (
 	"log"
 	"os"
 
-	"./github"
+	"github"
 )
 
 func main() {
