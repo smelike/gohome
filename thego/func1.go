@@ -1,14 +1,21 @@
-package main11
+package funct
 
 import "fmt"
 
-func main() {
+/* func main() {
 
 	fmt.Printf("%T\n", add)
 	fmt.Printf("%T\n", sub)
 	fmt.Printf("%T\n", first)
 	fmt.Printf("%T\n", zero)
 
+} */
+
+func printtype() {
+	fmt.Printf("%T\n", add)
+	fmt.Printf("%T\n", sub)
+	fmt.Printf("%T\n", first)
+	fmt.Printf("%T\n", zero)
 }
 
 func add(x int, y int) int { return x + y }
