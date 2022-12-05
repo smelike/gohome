@@ -102,10 +102,17 @@ func Parse(r io.Reader) (*Node, error)
 [brevity, 简洁]
 
 Exercise 5.1: Change the findlinks program to traverse the n.FirstChild linked list using recursive calls to visit instead of a loop.
+ 
+ 思路：
 
 Exercise 5.2: Write a function to populate a mapping from element names - p, div, span, and so on- to the number of elments with that name in an HTML document tree.
 
 Exercise 5.3: Write a function to print the contents of all text nodes in an HTML document tree. Do not descend into <script> or <style> elements, since their contents are not visible in a web browser.
 
-Exercise 5.4: Extend the visit function so that it extracts other kinds of links from teh document, such as images, scripts, and style sheets.
+Exercise 5.4: Extend the visit function so that it extracts other kinds of links from the document, such as images, scripts, and style sheets.
+
+
+### 5.3 Multiple Return Values
+
+A function can return more than one result. We've seen many examples of functions from standard packages that return two values, the desired computational result and an error value or boolean that indicates whether the computation worked. The next example shows how to write one of our own.
 
