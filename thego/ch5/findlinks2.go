@@ -1,6 +1,7 @@
 package main
 
 import (
+	"bytes"
 	"fmt"
 	"os"
 
@@ -11,14 +12,15 @@ import (
 
 func main() {
 	for _, url := range os.Args[1:] {
-		links, err := findLinks(url)
+		/* links, err := findLinks(url)
 		if err != nil {
 			fmt.Fprintf(os.Stderr, "findlinks2: %v\n", err)
 			continue
 		}
 		for _, link := range links {
 			fmt.Println(link)
-		}
+		} */
+		fmt.Println(CountWordsAndImages(url))
 	}
 }
 
@@ -60,6 +62,8 @@ func CountWordsAndImages(url string) (words, images int, err error) {
 		return
 	}
 	doc, err := html.Parse(resp.Body)
+	/* 	doc, err := io.ReadAll(resp.Body)
+	   	fmt.Println(resp.Body, string(doc), err) */
 	resp.Body.Close()
 	if err != nil {
 		err = fmt.Errorf("Parsing HTML: %s\n", err)
@@ -73,5 +77,26 @@ func countWordsAndImages(n *html.Node) (words, images int, err error) {
 		words:
 		images:
 	*/
+	// html.Node 转换为 io.Reader
+	/*
+		scanner := bufio.NewScanner(bufio.NewReader(n))
+		scanner.Split(bufio.ScanWords)
+		for scanner.Scan() {
+			w := scanner.Text()
+			fmt.Println(w)
+		} */
+	// html.ElementNode is not html.TextNode
+	text := &bytes.Buffer{}
+	collectText(n, text)
+	fmt.Println(text)
 	return
+}
+
+func collectText(n *html.Node, buf *bytes.Buffer) {
+	if n.Type == html.TextNode {
+		buf.WriteString(n.Data)
+	}
+	for c := n.FirstChild; c != nil; c = c.NextSibling {
+		collectText(c, buf)
+	}
 }
