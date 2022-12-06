@@ -39,6 +39,7 @@ func findLinks(url string) ([]string, error) {
 	return visit(nil, doc), nil
 }
 
+// 黄色波浪线，提示 visit 已经在同一 package main 内重复定义
 func visit(links []string, n *html.Node) []string {
 	if n.Type == html.ElementNode && n.Data == "a" {
 		for _, a := range n.Attr {
@@ -51,4 +52,26 @@ func visit(links []string, n *html.Node) []string {
 		links = visit(links, c)
 	}
 	return links
+}
+
+func CountWordsAndImages(url string) (words, images int, err error) {
+	resp, err := http.Get(url)
+	if err != nil {
+		return
+	}
+	doc, err := html.Parse(resp.Body)
+	resp.Body.Close()
+	if err != nil {
+		err = fmt.Errorf("Parsing HTML: %s\n", err)
+		return
+	}
+	words, images, err = countWordsAndImages(doc)
+	return
+}
+func countWordsAndImages(n *html.Node) (words, images int, err error) {
+	/*
+		words:
+		images:
+	*/
+	return
 }

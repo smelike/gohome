@@ -116,3 +116,53 @@ Exercise 5.4: Extend the visit function so that it extracts other kinds of links
 
 A function can return more than one result. We've seen many examples of functions from standard packages that return two values, the desired computational result and an error value or boolean that indicates whether the computation worked. The next example shows how to write one of our own.
 
+
+Go's garbage collector recycles unused memory, but do not assume it will release unused operating system resources like open files and network connnections.
+
+The result of calling a multi-valued function is a tuple of values. The caller of such a function must explicitly assign the values to variables if any of them are to be used:
+
+`links, err := findLinks(url)`
+
+A multi-valued call may appear as the sole argument when calling a function of multiple parameters. Although rarely used in production code, this feature is sometimes convenient during debugging since it lets us print all the results of a call using a single statement. The two print statements below have the same effect.
+
+```
+log.Println(findLinks(url))
+
+links, err := findLinks(url)
+log.Println(links, err)
+```
+
+Well-chosen names can document the significance of a function's results.
+
+```
+func Size(rect image.Rectangle) (width, height int)
+func Split(path string) (dir, file string)
+func HourMinSec(t time.Time) (hour, minute, second int)
+
+```
+
+[named result] In a function with named results, the operands of a return statement may be omitted. This is called __a bare return__.
+
+[a bare return]
+```
+// CountWordsAndImages does an HTTP GET request for the HTML
+// document url and returns the number of words and images in it.
+
+func CountWordsAndImages(url string) (words, images int, err error) {
+    resp, err := http.Get(url)
+    if err != nil {
+        return // return 0, 0, err
+    }
+    doc, err := html.Parse(resp.Body)
+    resp.Body.Close()
+    if err != nil {
+        err = fmt.Errorf("parsing HTML: %s", err)
+        return // return 0, 0, err
+    }
+    words, images = countWordsAndImages(doc)
+    return // return words, images, nil
+}
+
+func countWordsAndImages(n *html.Node) (words, images int) { /* ... */}
+```
+

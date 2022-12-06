@@ -5,3 +5,7 @@ Exercise 5.2: Write a function to populate a mapping from element names - p, div
 Exercise 5.3: Write a function to print the contents of all text nodes in an HTML document tree. Do not descend into <script> or <style> elements, since their contents are not visible in a web browser.
 
 Exercise 5.4: Extend the visit function so that it extracts other kinds of links from teh document, such as images, scripts, and style sheets.
+
+Exercise 5.5: Implement countWordsAndImages. (See Exercise 4.9 for word-splitting)
+
+Exercise 5.6: Modify the corner function in gopl.io/ch3/surface to use named results and a bare return statement.
