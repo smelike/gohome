@@ -4,6 +4,7 @@ import (
 	"bytes"
 	"fmt"
 	"os"
+	"strings"
 
 	"net/http"
 
@@ -86,17 +87,35 @@ func countWordsAndImages(n *html.Node) (words, images int, err error) {
 			fmt.Println(w)
 		} */
 	// html.ElementNode is not html.TextNode
+
+	// extract text
 	text := &bytes.Buffer{}
 	collectText(n, text)
 	fmt.Println(text)
+	// extract image
 	return
 }
 
+/*
+如何过滤 script 与 style
+*/
 func collectText(n *html.Node, buf *bytes.Buffer) {
+
+	// b := n.Data != "script" && n.Data != "style"
+	// fmt.Printf("%v - %s", b, n.Data)
 	if n.Type == html.TextNode {
-		buf.WriteString(n.Data)
+		// fmt.Printf("==%v===\n", n.Data)
+		if (n.Data != "script") && (n.Data != "style") {
+			buf.WriteString(strings.TrimSpace(n.Data))
+		} else {
+			fmt.Println(n.Data)
+		}
 	}
 	for c := n.FirstChild; c != nil; c = c.NextSibling {
 		collectText(c, buf)
 	}
 }
+
+/* func collectImages(n *html.Node, []string) {
+
+} */
