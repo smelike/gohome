@@ -159,10 +159,31 @@ func CountWordsAndImages(url string) (words, images int, err error) {
         err = fmt.Errorf("parsing HTML: %s", err)
         return // return 0, 0, err
     }
-    words, images = countWordsAndImages(doc)
+    words, images = countWordsAndImages(doc) // compilr error
     return // return words, images, nil
 }
 
 func countWordsAndImages(n *html.Node) (words, images int) { /* ... */}
 ```
 
+### 5.4 Errors
+
+A function for which failure is an expected behavior returns an additional result, conventionally the last one.
+
+If the failure has only one possible cause, the result is a boolean, usually called ok, as in this example of a cache lookup that always succeeds unless there was no entry for that key:
+
+```
+value, ok := cache.Lookup(key)
+if !ok {
+    // ... cache[key] does not exist...
+}
+```
+
+The failure may have a variety of causes for which the called will need an explanation. In such cases, the type of the additional result is error.
+
+
+The built-in type error is an interface type.
+An error may be nil or non-nil, that nil implies success and non-nil implies failure, and that a non-nil error has an error message string which we can obtain by calling its Error method or print by calling `fmt.Println(err)` or `fmt.Printf("%v", err)`.
+
+
+Usually when a function returns a non-nil error, its other results undefined and should be ignored. However, a few function may return partial results in error cases. For example, if an error occurs while reading from a filee, a call to Read returns the number of bytes it was able to read and an error value describing the problem. For correct behavior, some callers may need to process the incomplete data before handling the error, so it is important that such functions clearly document their results.

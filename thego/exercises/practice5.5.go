@@ -1,10 +1,9 @@
 package main
 
 import (
-	"bytes"
+	"bufio"
 	"fmt"
 	"os"
-	"strings"
 
 	"net/http"
 
@@ -13,15 +12,14 @@ import (
 
 func main() {
 	for _, url := range os.Args[1:] {
-		/* links, err := findLinks(url)
+		links, err := findLinks(url)
 		if err != nil {
 			fmt.Fprintf(os.Stderr, "findlinks2: %v\n", err)
 			continue
 		}
 		for _, link := range links {
 			fmt.Println(link)
-		} */
-		fmt.Println(CountWordsAndImages(url))
+		}
 	}
 }
 
@@ -63,8 +61,6 @@ func CountWordsAndImages(url string) (words, images int, err error) {
 		return
 	}
 	doc, err := html.Parse(resp.Body)
-	/* 	doc, err := io.ReadAll(resp.Body)
-	   	fmt.Println(resp.Body, string(doc), err) */
 	resp.Body.Close()
 	if err != nil {
 		err = fmt.Errorf("Parsing HTML: %s\n", err)
@@ -78,36 +74,12 @@ func countWordsAndImages(n *html.Node) (words, images int, err error) {
 		words:
 		images:
 	*/
-	// html.ElementNode is not html.TextNode
+	scan := bufio.NewScanner(n)
+	scan.Split(bufio.ScanWords)
 
-	// extract text
-	text := &bytes.Buffer{}
-	collectText(n, text)
-	fmt.Println(text)
-	// extract image
+	for scan.Scan() {
+		w := scan.Text()
+		fmt.Println(w)
+	}
 	return
 }
-
-/*
-如何过滤 script 与 style
-*/
-func collectText(n *html.Node, buf *bytes.Buffer) {
-
-	// b := n.Data != "script" && n.Data != "style"
-	// fmt.Printf("%v - %s", b, n.Data)
-	if n.Type == html.TextNode {
-		// fmt.Printf("==%v===\n", n.Data)
-		if (n.Data != "script") && (n.Data != "style") {
-			buf.WriteString(strings.TrimSpace(n.Data))
-		} else {
-			fmt.Println(n.Data)
-		}
-	}
-	for c := n.FirstChild; c != nil; c = c.NextSibling {
-		collectText(c, buf)
-	}
-}
-
-/* func collectImages(n *html.Node, []string) {
-
-} */
