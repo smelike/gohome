@@ -187,3 +187,11 @@ An error may be nil or non-nil, that nil implies success and non-nil implies fai
 
 
 Usually when a function returns a non-nil error, its other results undefined and should be ignored. However, a few function may return partial results in error cases. For example, if an error occurs while reading from a filee, a call to Read returns the number of bytes it was able to read and an error value describing the problem. For correct behavior, some callers may need to process the incomplete data before handling the error, so it is important that such functions clearly document their results.
+
+#### 5.4.1. Error-Handling Strategies
+
+When a function call returns an error, it's the caller's responsibility to check it and take appropriate action. Depending on the situation, there may be a number of possibilities. Let's take a look at five of them.
+
+When the error is ultimately handled by the program's main function, it should provide a clear causal chain from the root problem to the overall failure, reminiscent of a NASA accident investigation: `genesis: crashed: no parachute: G-switch failed: bad relay orientation`
+
+Because error messages are frequently chained together, message strings should not be capitalized and newlines should be avoided.
