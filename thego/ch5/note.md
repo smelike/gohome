@@ -195,3 +195,39 @@ When a function call returns an error, it's the caller's responsibility to check
 When the error is ultimately handled by the program's main function, it should provide a clear causal chain from the root problem to the overall failure, reminiscent of a NASA accident investigation: `genesis: crashed: no parachute: G-switch failed: bad relay orientation`
 
 Because error messages are frequently chained together, message strings should not be capitalized and newlines should be avoided.
+
+#### 5.4.2. End of File (EOF)
+
+```
+in := bufio.NewReader(os.Stdin)
+for {
+    r, _, err := in.ReadRune()
+    if err == io.EOF {
+        break   // finished reading
+    }
+    if err != nil {
+        return fmt.Errorf("read failed: %v", err)
+    }
+    // ... user...
+}
+```
+
+
+### 5.5. Function Values
+
+Functions are first-class values in Go: like other values, function values have types, and they may be assigned to variables or passed to or returned from functions. A function value may be called like any other function. For example:
+
+```
+func square(n int) int {return n * n}
+func negative(n int) int {return -n}
+func product(m, n int) int { return m * n }
+
+f := square
+fmt.Println(f(3))
+
+f = negative
+fmt.Println(negative(3))
+fmt.Printf("%T\n", f)   // func(int) int
+
+f = product // compile error: can't assign f(int, int) int to f(int) int
+```
