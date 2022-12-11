@@ -231,3 +231,6 @@ fmt.Printf("%T\n", f)   // func(int) int
 
 f = product // compile error: can't assign f(int, int) int to f(int) int
 ```
+
+### 5.6 Anonymous Functions
+
