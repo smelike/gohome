@@ -234,3 +234,12 @@ f = product // compile error: can't assign f(int, int) int to f(int) int
 
 ### 5.6 Anonymous Functions
 
+When an anonymous function requires a recursion, we must first declare a variable, and then assign the anonymous function to that variable. Had these two steps been combined in the declaration, the function literal would not be within the scope of the variable visitAll so it would have no way to call itself recursively:
+
+```
+visistAll := func(items []string) {
+    // ...
+    visitAll(m[item])   // compile error: undefined: visitAll
+    // ...
+}
+```
