@@ -418,4 +418,41 @@ s := []struct{
     {13, false},
 }
 ```
+
+Slice defaults
+When slicing, you may omit the high or low bounds to use their defaults instead. The default is zero for the low bound and the length of the slice for the high bound.
+
+For the array `var [10]int`, these slice expressions are equivalent:
+```
+a[0:10]
+a[:10]
+a[0:]
+a[:]
+```
+
+For example,
+
+```
+func main() {
+	s := []int{2, 3, 5, 7, 11, 13}
+
+	s = s[1:4] // [3,5,7]
+	fmt.Println(s)
+
+	s = s[:2] // [3,5] // exclude the index 2
+	fmt.Println(s) 
+
+	s = s[1:] // [5] // the lenght of slice is 2.
+	fmt.Println(s)
+}
+```
+
+Slice length and capacity
+
+A slice has both a length and a capacity.
+The length of a slice is the number of elements it contains.
+The capacity of a slice is the number of elements in the underlying array, counting from the first element in the slice.
+The length and capacity of a slice `s` can be obtained using the expressions `len(s)` and `cap(s)`.
+
+![slice-len.go](./snapshots/slice-len.go.png)
 (定义、标准、因果关系、价值观)
