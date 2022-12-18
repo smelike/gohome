@@ -395,5 +395,27 @@ func main() {
 }
 ```
 
+Slice literals
 
+A slice literal is like an array literal without the length.
+This is an array literal: `[3]bool{true, true, false}`.
+And this creates the same array as above, then builds a slice that references it:
+```
+[]bool{true, true, false}
+```
+
+```
+// fiel-value pairs
+s := []struct{
+    i int
+    b bool
+}{
+    {2, true},
+    {3, true},
+    {5, true},
+    {7, true},
+    {11, false},
+    {13, false},
+}
+```
 (定义、标准、因果关系、价值观)
