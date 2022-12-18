@@ -372,7 +372,7 @@ A slice is formed by specifying two indices, a low and a high bound, separated b
 
 This selects a half-open range which includes the first element, but excludes the last one. The following expression creates a slice which includes elements `1` through `3` of `a`: `a[1:4]`
 
-An empty slice declaration: `var names []string`.
+An empty(nil) slice declaration: `var names []string`.
 
 Slices are like references to arrays
 
@@ -455,4 +455,30 @@ The capacity of a slice is the number of elements in the underlying array, count
 The length and capacity of a slice `s` can be obtained using the expressions `len(s)` and `cap(s)`.
 
 ![slice-len.go](./snapshots/slice-len.go.png)
+
+Nil slices
+The zero value of a slice is `nil`.
+A nil slice has a length and capacity of 0 and has no underlying array.
+
+```
+func main() {
+    var s []int
+    fmt.Println(s, len(s), cap(s))
+    if s == nil {
+        fmt.Println("Nil!")
+    }
+}
+```
+
+Create a slice with make
+Slices can be created with the built-in `make` function; this is how you create dynamically-size arrays.
+The make function allocates a zeroed array and returns a slice that refers to that array: `a := make([]int, 5)`, len(a) = 5.
+
+To specify a capacity, pass a third argument to `make`:
+
+```
+b := make([]int, 0, 5)  // len(b) = 0, cap(b) = 5
+b = b[:cap(b)]  // len(b) = 5, cap(b) = 5
+b = b[1:]   // len(b) = 4, cap(b) = 4
+```
 (定义、标准、因果关系、价值观)
