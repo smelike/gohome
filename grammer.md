@@ -481,4 +481,46 @@ b := make([]int, 0, 5)  // len(b) = 0, cap(b) = 5
 b = b[:cap(b)]  // len(b) = 5, cap(b) = 5
 b = b[1:]   // len(b) = 4, cap(b) = 4
 ```
+
+Slice of slices
+Slices can contain any type, including other slices.
+
+```
+func main() {
+    board : = [][]string{
+        []string{"_", "_", "_"},
+        []string{"_", "_", "_"},
+        []string{"_", "_", "_"}
+    }
+}
+```
+
+Appending to a slice
+
+It is common to append new elements to a slice, and so Go provides a built-in `append` function.
+
+```
+func append(s []T, vs ...T) []T
+```
+The first parameter `s` of append is a slice of type, and the rest are `T` values to append to the slice.
+
+The resulting value of `append` is a slice containing all the elements of the original slice plus the provided values.
+
+If the backing array of `s` is too small to fit all the given values, a bigger array will be allocated. The returned slice will point to the newly allocated array.
+
+
+
+
+---
+Built-in
+
+func cap ¶
+func cap(v Type) int
+The cap built-in function returns the capacity of v, according to its type:
+Array: the number of elements in v (same as len(v)).
+Pointer to array: the number of elements in *v (same as len(v)).
+Slice: the maximum length the slice can reach when resliced;
+if v is nil, cap(v) is zero.
+Channel: the channel buffer capacity, in units of elements;
+if v is nil, cap(v) is zero.
 (定义、标准、因果关系、价值观)
