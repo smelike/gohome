@@ -207,7 +207,12 @@ Exercise: Loops and Functions
 
 Let's implement a square root function: given a number x, we want to find the number z for which z^2 is most nearly x.
 
-寻找 z，使得 z^2 最接近于 x，即是求 x 平方根的最近似值。
+寻找 z，使得 z^2 最接近于 x，即是求 x的平方根的最近似值。
+
+ x - z^2 = 0
+
+导数方程是 x = 2z
+
 
 ```
 func Sqrt(x float64) float64 {
@@ -508,7 +513,76 @@ The resulting value of `append` is a slice containing all the elements of the or
 
 If the backing array of `s` is too small to fit all the given values, a bigger array will be allocated. The returned slice will point to the newly allocated array.
 
+注意：slice 与内存释放。从一个大文件中筛选内容时，使用 slice 保存了选中结果，但存放结果的 slice 所依赖的数组还是该大文件。当 slice 没被 GC 释放回收，则该大文件同样存在于内存。要想释放大文件的内存，应在返回选中结果的slice 前，先用 make 新建一个slice(c := make([]byte, len(b)))，再复制(copy(c, b))。
 
+Range
+ 
+ The `range` form of the `for` loop iterates over a slice or a map.
+When ranging over slice, two values are returned for each iteration. The first is the index, and the second is a copy of the element at that index.
+
+```
+var pow =[]int{1, 2, 4, 8, 16, 32, 64, 128}
+
+func main() {
+
+    for i, v := range pow {
+        fmt.Println("2**%d = %d\n", i, v)
+    }
+}
+
+```
+Range continued
+
+You can skip the index or value by assign to `_`.
+```
+for i, _ := range pow
+for _, value := range pow
+```
+If you only want the index, you can omit the second variable.
+```
+for i := range pow
+```
+
+Exercise: Slices
+
+Implement `Pic`. It should return a slice of length `dy`, each element of which is a slice of `dx` 8-bit unsigned integers. When you run the program, it will display your picture, interpreting the integers as grays (well, bluescale) values.
+The choice of image is up to you. Interesting function include `(x+y)/2`, `x*y`, and `x^y`.
+
+```
+package main
+
+import "golang.org/x/tour/pic"
+
+func Pic(dx, dy int) [][]uint8 {
+
+}
+
+func main() {
+    pic.Show(pic)
+}
+```
+
+Maps 
+
+A map maps keys to values.
+The zero value of a map is `nil`. A `nil` map has no keys, nor can keys be added.
+The `make` function returns a map of the given type, initialized and ready for use.
+
+```
+type Vertex struct {
+    Lat, Long float64
+}
+
+var m map[string]Vertex
+
+func main() {
+    m = make(map[string]Vertex) // initialize map
+    m["Bell Labs"] = Vertex{
+        40.089, -74.399967,
+    }
+    fmt.Println(m["Bell Labs"])
+}
+```
 
 
 ---
@@ -523,4 +597,23 @@ Slice: the maximum length the slice can reach when resliced;
 if v is nil, cap(v) is zero.
 Channel: the channel buffer capacity, in units of elements;
 if v is nil, cap(v) is zero.
+
 (定义、标准、因果关系、价值观)
+
+
+-----
+黄执中说话课程
+-----
+我有一个需求，请问如何让大家来满足我？很多人都是有类同的需求，底层是同样的需求模式。
+如何让大家知道我喜欢他们？
+
+能看到别人有需求的人，才能产生影响力？
+
+跟别人相处，不需去展露你的博学，而是要展露你的好奇，你的感知（认同情绪等）。
+
+聊天不是交换信息，而是交换情绪。
+
+没碰到情绪，就是没触碰到你。***
+年轻人不是不给情绪，而是只给了自己人，如：KTV，遇到喜欢的朋友。
+
+更多人的问题是自己不听自己的话。
