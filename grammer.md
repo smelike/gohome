@@ -573,10 +573,11 @@ type Vertex struct {
     Lat, Long float64
 }
 
-var m map[string]Vertex
+var m map[string]Vertex // zero value is nil
 
 func main() {
     m = make(map[string]Vertex) // initialize map
+    // m := make(map[string]Veretex) // if not declare var m map[string]Vertex
     m["Bell Labs"] = Vertex{
         40.089, -74.399967,
     }
@@ -584,6 +585,138 @@ func main() {
 }
 ```
 
+Map literals
+
+Map literals are like struct literals, but the keys are required.
+
+```
+type Vertex struct {
+    Lat, Long float64
+}
+
+var m = map[string]Vertex{
+    "Bell Labs": Vertex {
+        40.68, -74.3999,
+    },
+    "Google": Vertex{
+        37.42, -122.08,
+    }
+}
+```
+
+Map literals continued
+
+If the top-level type is just a type name, you can omit it fromthe elements of the literal.
+
+```
+type Vertex struct {
+    Lat, Long float64
+}
+
+var m = map[string]Vertex{
+    "Bell Labs": {40.68, -74.399},
+    "Google": {37.422, -122.084},
+}
+```
+Mutating Maps
+
+Insert or update an element in map `m`:   m[key] = elem
+
+Retrieve an element: elem = m[key]
+
+Delete an element: delete(m, key)
+
+Test that a key is present with a two-value assignment: elem, ok = m[key]
+
+If key is in m, ok is true. If not, ok is false.
+
+If key is not in the map, then elem is the zero value for the map's element type.
+
+Note: if elem or ok have not yet been declared you could use a short declaration form: `elem, ok := m[key]`
+
+Exercise: Maps
+
+Implement `WordCount`. It should return a map of the counts of each "word" in the string `s`. The `wc.Test` function runs a test suite against the provided function and prints success or failure. You might find strings.Fields helpful.
+
+```
+func WordCount(s string) map[string]int {
+    count := make(map[string]int)
+
+    for _, f := range strings.Fields(s) {
+        if _, ok = count[f]; !ok {
+            count[f] = 1
+            continue
+        }
+        count[f] += 1
+    }
+}
+
+```
+Function values
+
+Functions are values too. They can be passed around just like other values.
+Function values may be used as function arguments and return values.
+[function arguments] [return values]
+
+
+```
+// function value 内的函数参数是没有 name的
+func compute(fn func(float64, float64) float64) float64 {
+    return fn(3, 4)
+}
+
+func main() {
+    hypot := func(x, y float64) float64 {
+        return math.Sqrt(x*x + y*y)
+    }
+    fmt.Println(hypot(5, 12))
+    fmt.Println(compute(hypot))
+    fmt.Println(compute(math.Pow))
+}
+```
+
+Function closures
+
+Go functions may be closure. A closure is a function value that references variables from outside its body. The function may access and assign to the referenced variables; in this sense the function is "bound" to the variables.
+
+For example, the `adder` function returns a closure. Each closure is bound to its own `sum` variable.
+
+```
+func adder() func(int) int {
+    sum := 0
+    return func(x int) int {
+        sum += x
+        return sum
+    }
+}
+
+func main() {
+    pos, neg := adder(), adder()
+    for i := 0; i < 10; i++ {
+        fmt.Println(
+            pos(i),
+            neg(-2*i), // a newline must end with ,
+        )
+    }
+}
+```
+
+Exercise: Fibonacci closure
+
+Let's have some fun with functions.
+Implement a `fibonacci` function that returns a function (a closure) that returns successive `[fibonacci numbers](https://en.wikipedia.org/wiki/Fibonacci_number)`(0 1 1 2 3 5, ...)
+
+```
+func fibonacci () func() int {
+    x := 0
+    y := 1
+    return func() int {
+        y += x
+        x, y = y,x
+        return y
+    }
+}
+```
 
 ---
 Built-in
