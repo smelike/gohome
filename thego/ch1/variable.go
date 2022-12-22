@@ -11,7 +11,7 @@ func main() {
 func n() { print(a) }
 
 func m() {
-	// a := "O"
-	a = "0" // it means different, its value is replaced by "O"
+	// a := "O" //
+	a = "O" // it means different, its value is replaced by "O"
 	print(a)
 }
