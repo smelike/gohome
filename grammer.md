@@ -879,12 +879,88 @@ func main() {
     v := Vertex{3, 4}
     v.Scale(2)
     ScaleFunc(&v, 10) // &v pointer
-
     p := &Vertex{4, 3} // pointer
     p.Scale(3)
     ScaleFunc(p, 8) // p is a pointer value
 
     fmt.Println(v, p) // v is a value, p is a poniter value.
+}
+```
+Methods and pointer indirection (2)
+
+The equivalent happens in the reverse direction.
+
+Functions that take a value argument must take a value of that specific type:
+```
+var v Vertex
+fmt.Println(AbsFunc(v)) // ok
+fmt.Println(AbsFunc(&v)) // compile error!
+```
+Whie methods with value receivers take either a value or a pointer as the receiver when they are called:
+
+```
+var v Vertex
+fmt.Println(v.Abs()) // ok
+
+p := &v
+fmt.Println(p.Abs()) // ok
+
+```
+In this case, the method call p.Abs() is interpreted as `(*p).Abs()`.
+
+```
+type Vertex struct {
+    X, Y float64
+}
+
+func (v Vertex) Abs() float64 {
+    return math.Sqrt(v.X * v.X + v.Y * v.Y)
+}
+
+func AbsFunc(v Vertex) float64{
+    return math.Sqrt(v.X * v.X + v.Y * v.Y)
+}
+
+func main() {
+    v := Vertex{3, 4}
+    fmt.Println(v.Abs())
+    fmt.Println(AnsFunc(v))
+
+    p := &Vertex{4, 3}
+    fmt.Println(p.Abs())
+    fmt.Println(AbsFunc(*p))
+}
+```
+
+Choosing a value or a pointer receiver
+
+There are two reasons to use a pointer receiver.
+The first is so that the method can modiy the value that its receiver points to.
+The second is to avoid copying the value on each method call. This can be more efficient if the receiver is a large struct, for example.
+
+In this example, both Scale and Abs are with receiver type `*Vertex`, even though the `Abs` method needn't modify its receiver.
+
+In general, all methods on a given type should have either value or pointer receivers, but not a mmixture of both. (We'll see why over the next few pages.)
+
+```
+type Vertex struct {
+    X, Y float64
+}
+
+func (v *Vertex) Abs() float64 {
+    return math.Sqrt(v.X * v.X + v.Y * v.Y)
+}
+
+func (v *Vertex) Scale(f float64) {
+    v.X = v.X * f
+    v.Y = v.Y * f
+}
+
+func main() {
+    v := &Vertex{3, 4}
+    fmt.Printf("Before scaling: %+v, Abs: %v\n", v, v.Abs())
+    v.Scale(5)
+    fmt.Printf("After Scaling: %+v, Abs: %v\n", v, v.Abs())
 }
 ```
 ---
