@@ -799,6 +799,94 @@ Methods with pointer receivers can modify the value to which the receiver points
 
 With a value receiver, the Scale method operates on a copy of the original Vertex value.(This is the same behavior as for any other function argument.) The Scale must have a pointer receiver to change the Vertex value declared in the main function.
 
+```
+// method-pointers.go
+
+type Vertex struct {
+    X， Y float64
+}
+
+// receiver - value receiver or pointer receiver
+func (v *Vertex) Abs() float64 {
+    return math.Sqrt(v.X * v.X + v.Y * v.Y)
+}
+func (v *Vertex) Scale(f float64) {
+    v.X = v.X * f
+    v.Y = v.Y * f
+}
+```
+
+Pointers and functions
+
+Here we see the `Abs` and `Scale` methods rewritten as functions. Again, try removing the `*` from line 16. Can you see why the behavior changes? Why else did you need to change for the example to compile? (If you're not sure, continue to the next page.)
+
+```
+type Vertex struct {
+    X, Y float64
+}
+
+func Abs(v Vertex) float64 {
+    return math.Sqrt(v.X * v.X + v.Y * v.Y)
+}
+
+func Scale(v *Vertex, f float64) {
+    v.X = v.X * f
+    v.Y = v.Y * f
+}
+
+func main() {
+    v := Vertex{3, 4}
+    Scale(&v, 10)
+    fmt.Println(Abs(v))
+}
+```
+
+Methods and pointer indirection
+
+Comparing the previous two program, you might notice that functions with a pointer argument must take a pointer:
+
+```
+var v Vertex
+ScaleFunc(v, 5) // compile error!
+ScaleFunc(&v, 5) // ok
+```
+While methods with pointer receivers take either a value or a pointer as the receiver when they are called:
+
+```
+var v Vertex
+v.Scale(5) // ok
+p := &v
+p.Scale(10) // ok
+```
+For teh statement v.Scale(5), even though v is a value and not a pointer, the method with the pointer receiver is called automatically. That is, as a convenience, Go interprets the statement v.Scale(5) as (&v).Scale(5) since the Scale method has a pointer receiver.
+
+```
+type Vertex struct {
+    X, Y float64
+}
+
+func (v *Vertex) Scale(f float64) {
+    v.X = v.X * f
+    v.Y = v.Y * f
+}
+
+func ScaleFunc(v *Vertex, f float64) {
+    v.X = v.X * f
+    v.Y = v.Y * f
+}
+
+func main() {
+    v := Vertex{3, 4}
+    v.Scale(2)
+    ScaleFunc(&v, 10) // &v pointer
+
+    p := &Vertex{4, 3} // pointer
+    p.Scale(3)
+    ScaleFunc(p, 8) // p is a pointer value
+
+    fmt.Println(v, p) // v is a value, p is a poniter value.
+}
+```
 ---
 Built-in
 
