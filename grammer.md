@@ -963,6 +963,90 @@ func main() {
     fmt.Printf("After Scaling: %+v, Abs: %v\n", v, v.Abs())
 }
 ```
+
+Interfaces
+
+[A set of method signatures]An __interface type__ is defined as a set of method signatures.
+
+A value of interface type can hold any value that implements those methods.
+
+Note: There is an error in the example code on line 22. `Vertex`(the value type) doesn't implement `Abser`
+because the `Abs` method is defined only on `*Vertex`(the pointer type).
+
+
+```
+package main
+
+import (
+    "fmt"
+    "math"
+)
+
+// a set of method signatures
+type Abser interface {
+    Abs() float64
+}
+
+func main () {
+    var a Abser
+    f := MyFloat(-math.Sqrt2)
+    v := Vertex{3 ,4}
+    
+    a = f   // a MyFloat implements Abser
+    a = &v  // a *Vertex implements Abser
+    
+    // In the following line, v is a Vertex (not *Vertex) and does NOT implement Abser.
+    // a = v
+    fmt.Println(a.Abs())
+}
+
+// type MyFloat
+type MyFloat float64
+
+func (f MyFloat) Abs() float64 {
+    if f < 0 {
+        return float64(-f)
+    }
+    return float64(f)
+}
+
+// type Vertex
+type Vertex struct {
+    X, Y float64
+}
+
+func (v *Vertex) Abs() float64 {
+    return math.Sqrt(v.X * v.X + v.Y * v.Y)
+}
+```
+Interface are implemented implicitly
+
+A type implements an interface by implementing its methods. There is no explicit declaration of intent, no "implements" keyword.
+
+Implicit interface decouple the definition of an interface from its implementation, which could then appear in any package without prearrangement.
+
+
+```
+package main
+
+type I interface {
+    M()
+}
+
+type T struct {
+    S string
+}
+
+//
+func (t T) M() {
+    fmt.Println(t.S)
+}
+
+func main() {
+    var i I = T{"Hello, I am type T struct"}
+    i.M() // access function M
+}
+```
 ---
 Built-in
 
