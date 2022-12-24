@@ -1128,6 +1128,53 @@ func describe(i I) {
 }
 ```
 
+Nil interface values
+
+A nil interface value holds neither value nor concrete type.
+
+Calling a method on a nil interface is a run-time error because there is no type inside the interface tuple to indicate which `concrete` method to call.
+
+```
+type I interface {
+    M()
+}
+
+func main() {
+    var i I // nil
+    describe(i)
+    i.M() // panic: runtime error
+}
+
+func describe(i I) {
+    fmt.Printf("(%v, %T)\n", i, i)
+}
+```
+
+The empty interface
+
+The interface type that specifies zero methods is known as the __empty interface__: `interface{}`
+
+An empty interface may hold values of any type. (Every type implements at least zero methods.)
+
+Empty interfaces are used by code that handles values of unknown type. For example, `fmt.Print` takes any numbre of arguments of type `interface{}`.
+
+```
+func main() {
+    var i interface{}
+    describe(i)
+    
+    i = 42
+    describe(i)
+
+    i = "hellor"
+    describe(i)
+}
+
+func describe(i interface{}) {
+    fmt.Printf("(%v, %T)\n", i, i)
+}
+```
+
 ---
 Built-in
 
