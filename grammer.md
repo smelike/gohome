@@ -219,6 +219,23 @@ func Sqrt(x float64) float64 {
     // implement
 }
 ```
+Switch
+
+```
+func main() {
+	fmt.Print("Go runs on ")
+	switch os := runtime.GOOS;os{
+	case "darwin":
+		fmt.Println("OS X.")
+	case "linux":
+		fmt.Println("Linux.")
+	default:
+		// freebsd, openbsd,
+		// plan9, windows...
+		fmt.Printf("%s.\n", os)
+	}
+}
+```
 
 Swith with no condition
 
@@ -1219,13 +1236,191 @@ func main() {
     fmt.Println(s, ok)
 
     f, ok := i.(float64)
-    fmt.Println(f, ok)
+    fmt.Println(f, ok) // the zero value of type T(float64)
 
     f = i.(float64) // panic
     fmt.Print(f)
 }
 ```
 
+Type switches
+
+A __type switch__ is a construct that permits several type assertions in series.
+
+A type switch is like a regular switch statement, but the cases in a type switch specify types (not values), and those values are compared against the type of the value held by the given interface value.
+
+```
+switch v := i.(type) {
+    case T:
+        // here v has type T
+    case S:
+        // here v has type S
+    default:
+        // no match; here v has the same type as i
+}
+```
+
+The declaration in a type switch has the same syntax as a type assertion `i.(T)`, but the specific type `T` is replaced with the keyword `type`.
+
+This switch statement tests whether the interface value `i` holds a value of type `T` or `S`. In each of the `T` and `S` cases, the variable `v` will be of type `T` or `S` respectively and hold the value held by `i`. In the default case (where there is no match), the variable `v` is of the same interface type and value as `i`.
+
+```
+func do(i interface{}) {
+    switch v: = i.(type) {
+        case int:
+        fmt.Printf("Twice %v is %v \n", v, v*2)
+        case string:
+        fmt.Printf("%q is %v bytes long\n", v, v)
+        default:
+        fmt.Printf("I don't know about type %T\n", v)
+    }
+}
+
+
+```
+
+Stringers
+
+One of the most ubiquitous interface is `Stringer` defined by the `fmt` package.
+
+```
+type Stringer interface {
+    String() string
+}
+```
+
+A `Stringer` is a type that can describe itself as a string. The `fmt` package (and many others) look for this interface to print values.
+
+
+```
+type Person struct{
+    Name string
+    Age int
+}
+
+func (p Person) String() string{
+    return fmt.Sprintf("%v (%v years)", p.Name, p.Age)
+}
+
+func main() {
+    a := Person{"Arthur Dent", 42}
+    z := Person{"Zaphod Beeblebrox", 9000}
+    fmt.Println(a,z)
+}
+```
+
+Exercise: Stringers
+
+Make the `IPAddr` type implement `fmt.Stringer` to print the address as a dotted quad.
+For instance, `IPAddr{1, 2, 3, 4}` should print as "1.2.3.4".
+
+```
+package main
+
+import (
+    "fmt"
+    "strings"
+)
+
+type IPAddr [4]byte // array of bytes
+
+func (ip IPAddr) String() string {
+    var o []string
+
+    for _, p := range ip {
+        o = append(o, fmt.Sprint(int(p)))
+    }
+    return strings.Join(o, ".")
+}
+
+func main() {
+    hosts := map[string]IPAddr{
+        "loopback": {127, 0, 0, 1},
+        "googleDNS": {8, 8, 8, 8}
+    }
+
+    for name, ip := range hosts {
+        fmt.Printf("%v: %v\n", name, ip)
+    }
+}
+```
+
+Errors
+
+Go programs express error state with error values.
+
+The error type is a built-in interface similar to `fmt.Stringer`:
+
+```
+type error interface {
+    Error() string
+}
+```
+(As with fmt.Stringer, the fmt package looks for the error interface when printing values.)
+
+Functions often return an error value, and calling code should handle errors by testing whether the error equals nil.
+
+```
+i, err := strconv.Atoi("42")
+
+if err != nil {
+    fmt.Printf("could't convert number: %v\n", err)
+    return
+}
+fmt.Println("Converted integer:", i)
+```
+A nil error denotes success; a non-nil error denotes failure.
+
+// errors.go
+```
+package main
+
+import(
+    "fmt"
+    "time"
+)
+
+type MyError struct{
+    When time.Time
+    What string
+}
+
+func(e *MyError) Error() string {
+    return fmt.Sprintf("at (%v), %s", e.When, e.What)
+}
+
+func run() error {
+    return &MyError{
+        time.Now(),
+        "it didn't work",
+    }
+}
+
+func main() {
+    if err := run(); err != nil {
+        fmt.Println(err)
+    }
+}
+
+```
+
+Exercise: Errors
+Copy your `Sqrt` function from the earlier exercise and modify it to return an `error` value.
+
+`Sqrt` should return a non-nil error value when given a negative number, as it doesn't support complex numbers.
+
+Create a new type
+```
+type ErrNegativeSqrt float64
+``
+and make it an `error` by giving it a 
+```
+func (e ErrNegativeSqrt) Error() string
+```
+method such that `ErrNegativeSqrt(-2).Error()` returns "cannot Sqrt negative number: -2".
+
+Note: A call to `fmt.Sprint(e)` inside the `Error` method will send the program into an infinite loop. You can avoid this by converting `e` first: `fmt.Sprint(float64(e))`. Why?
+Change your `Sqrt` function to return an `ErrNegativeSqrt` value when given a negative number.
 ---
 Built-in
 
