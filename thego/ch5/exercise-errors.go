@@ -40,6 +40,8 @@ func (e ErrNegativeSqrt) Error() string {
 		runtime: sp=0xc020161380 stack=[0xc020160000, 0xc040160000]
 		fatal error: stack overflow
 	*/
+	/* A call to fmt.Sprint(e) inside the Error method will send the program into an infinite loop.
+	You can avoid this by converting e first: fmt.Sprint(float64(e)). Why? */
 	return fmt.Sprintf("cannot Sqrt negative number: %f\n", e)
 }
 

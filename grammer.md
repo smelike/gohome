@@ -1421,6 +1421,50 @@ method such that `ErrNegativeSqrt(-2).Error()` returns "cannot Sqrt negative num
 
 Note: A call to `fmt.Sprint(e)` inside the `Error` method will send the program into an infinite loop. You can avoid this by converting `e` first: `fmt.Sprint(float64(e))`. Why?
 Change your `Sqrt` function to return an `ErrNegativeSqrt` value when given a negative number.
+
+---
+
+## methods
+
+Readers
+
+The `io` package specifies the `io.Reader` interface, which presents the read end of a  stream of data.
+
+The Go standard library contains many implementations of this interface, including files, network connnections, compressors, ciphers, and others.
+
+The `io.Reader` interface has a `Read` method:
+
+```
+func (T) Read(b []byte) (n int, err error)
+```
+`Read` populate the given byte slice with data and returns the number of bytes populated and an error value. It returns an `io.EOF` error when the stream ends.
+
+The example code creates a `string.Reader` and consumes its output 8 bytes at a time.
+
+```
+package main
+
+import (
+    "fmt"
+    "strings"
+    "io"
+)
+
+func main() {
+    f := strings.NewReader("Hello, Reader!")
+
+    b := make([]byte, 8)
+
+    for {
+        // populate the byte slice(b) with data
+        // return the number of bytes populated
+        n, err := r.Read(b)  
+        fmt.Printf("n = %v err = %v b = %v\n", n, err, b)
+        fmt.Printf("b[:n]=%q\n", b[:n])
+    }
+}
+```
+
 ---
 Built-in
 
