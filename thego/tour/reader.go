@@ -7,6 +7,7 @@ import (
 )
 
 func main() {
+	// 'heelo' // more than one character in rune literal
 	r := strings.NewReader("Hello, Reader!")
 
 	b := make([]byte, 8)

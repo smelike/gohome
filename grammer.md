@@ -1457,13 +1457,29 @@ func main() {
 
     for {
         // populate the byte slice(b) with data
-        // return the number of bytes populated
+        // method Read(): return the number of bytes populated and an error value
         n, err := r.Read(b)  
         fmt.Printf("n = %v err = %v b = %v\n", n, err, b)
         fmt.Printf("b[:n]=%q\n", b[:n])
+        if err == io.EOF {
+            break
+        }
     }
 }
 ```
+
+Exercise: Readers
+Implement a `Reader` type that emits an infinite stream of the ASCII character 'A'.
+
+Exercise: rot13Reader
+
+A common pattern is an `io.Reader` that wraps another `io.Reader`, modifying the stream in some way.
+
+For example, the `gzip.NewReader` function takes an `io.Reader` (a stream of compressed data) and returns a `*gzip.Reader` and returns a `*gzip.Reader` that aslo implements `io.Reader` (a stream of decompressed data).
+
+Implement a `rot13Reader` that implements `io.Reader` and reads from an `io.Reader`, modifying the stream by applying the `rot13` substitution cipher to all alphabetical characters.
+
+The `rot13Reader` type is provided for you. Make it an `io.Reader` by implementing its `Read` method.
 
 ---
 Built-in
