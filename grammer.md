@@ -1481,6 +1481,76 @@ Implement a `rot13Reader` that implements `io.Reader` and reads from an `io.Read
 
 The `rot13Reader` type is provided for you. Make it an `io.Reader` by implementing its `Read` method.
 
+
+Images
+
+`Package image` defines the `Image` interface:
+
+```
+package imagge
+
+type Image interface {
+    ColorModel() color.Model
+    Bounds() Rectangle
+    At(x, y int) color.Clor
+}
+```
+Note: the `Rectangle` return value of the `Bounds` method is actually an `image.Rectangle`, as the declaration is inside package `image`.
+
+The `color.Color` and `color.Model` types are also interface, but we'll ignore that by using the predefined implementations `color.RGBA` and `color.RGBAModel`. These interfaces and types are specified by the `image/color package`.
+
+
+```
+func main() {
+    m := image.NewRGBA(image.Rect(0, 0, 100, 100))
+    fmt.Println(m.Bounds())
+    fmt.Println(m.At(0, 0).RGBA())
+}
+```
+
+Exercise: Images
+
+Remember the picture generator you wrotte earlier? Let's write another one, but this time it will return an implementation of `image.Image` instead of a slice of data.
+
+Define your own `Image` type, implement `the necessary methods`, and call `pic.ShowImage`.
+
+`Bounds` should return a `image.Rectangle`, like `image.Rect(0, 0, w, h)`.
+
+`ColorModel` should return `color.RGBAModel`.
+
+`At` should return a a color; the value `v` in the last picture generator corresponds to `color.RGBA{v, v, 255, 255}` in this one.
+
+```
+type Image struct{}
+
+func (i Image) Bounds() image.Rectangle {
+    return image.Rect(50, 50, 200, 200)
+}
+
+func (i Image) ColorModel() color.Model{
+    return color.RGBAModel
+}
+
+func (i Image) At(x, y int) color.COlor {
+    return color.RGBA{uint8(x), uint8(y), 255, 255}
+}
+
+```
+
+---
+
+## Concurrency
+
+Goroutines
+
+A `goroutine` is a lightweight thread managed by the Go runtime.
+
+`go f(x, y, z)` starts a new goroutine running `f(x, y, z)`.
+
+The evalution of `f, x, y, z` happens in the current goroutine and the execution of `f` happens inn the new goroutine.
+
+Goroutines run inn the same address space, so access to shared memory must be synchronized. The `sync` package provides useful primitives, although you won't need them much in Go as there are other primitives.
+
 ---
 Built-in
 
