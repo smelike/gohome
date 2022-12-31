@@ -1549,7 +1549,228 @@ A `goroutine` is a lightweight thread managed by the Go runtime.
 
 The evalution of `f, x, y, z` happens in the current goroutine and the execution of `f` happens inn the new goroutine.
 
-Goroutines run inn the same address space, so access to shared memory must be synchronized. The `sync` package provides useful primitives, although you won't need them much in Go as there are other primitives.
+Goroutines run in the same address space, so access to shared memory must be synchronized. The `sync` package provides useful primitives, although you won't need them much in Go as there are other primitives.
+
+Channels
+[channel must be created before use.]
+[The data flows in the direction of the arrow.]
+[By default, sends and receives block until the other side is ready.]
+
+Channels are a type conduit through which you can send and receive values with the channel operator, `<-`.
+
+```
+ch <- v     // Send v to channel ch.
+v := <-ch   // Receive from ch, and assign value to v.
+```
+
+(The data flows in the direction of the arrow.) 数据按箭头方向流动
+
+Like maps and slices, channels must be created before use:
+
+```
+ch := make(chan int)
+```
+
+By default, sends and receives block until the other side is ready. This allows goroutines to synchronize without explicit locks or condition variables.
+
+The example codes sums the numbers in a slice, distributing the work between two goroutines. Once both goroutines have completed their computation, it calculates the final result.
+
+```
+package main
+
+func sum([]int, c chan int) {
+    sum := 0
+    for _, v := range s {
+        sum += v
+    }
+    c <- sum // send sum to c channel
+}
+
+func main() {
+
+    s := []int{7, 2, 8, -9, 4, 0}
+    fmt.Println(len(s), cap(s)) // 6 6
+
+    c := amke(chan int) // channels must be created before use
+    go sum(s[:len(s)/2])
+    go sum(s[len(s)/2:])
+
+    x, y := <-c, <-c
+
+    fmt.Println(x, y , x+y)
+}
+```
+
+Buffered Channels
+
+Channels can be buffered. Provide the buffer length as the second argument to `make` to initialize a buffered channel: `ch := make(chan int, 100)`
+
+Sends to a buffered channel block only when the buffer is full. Receives block when the buffer is empty.
+
+Modify the example to overfill the buffer and see what happens.
+(Overfill the buffer - fatal error: all goroutines are asleep - deadlock!)
+
+```
+package main
+
+func main() {
+    ch := make(chan int, 2)
+
+    ch <- 1
+    ch <- 2
+
+    fmt.Println(<-ch, <-ch) // 1 2
+}
+```
+
+Range and Close
+[Close a channel to indicate that no more values will be sent.]
+[Receivers can test whether a channel has been closed by assign a second parameter to the receive express: after, v, ok := <-ch]
+[ok is false if there are no more values to receive and the channel is closed.]
+[Only sender should close a channel, never the receiver.]
+[Sending on a closed channel will cause a panic.]
+
+A sender can close a channel to indicate that no more values will be sent. Receivers can test whether a channel has been closed by assigning a second parameter to the receive expression: after `v, ok := <-ch`.
+
+ok is false if there are no more values to receive and the channel is closed.(no more values to receive and the channel is closed)
+
+Note: Only the sender should close a channel, never the receiver. Sending on  a closed channel will cause a panic.
+
+Another note: Channel aren't like file; you don't usually need to close them. Closing is only necessary when the receiver must be told there are no more values coming, such as to terminate a `range` loop.
+
+```
+
+func fibonacci(n int, c chan int) {
+    x, y := 0, 1
+    for i :=0; i < n; i++ {
+        c <-x
+        x, y = y, x+y
+    }
+    close(x)
+
+    /*
+        if not close, for i := range channel will cause fatal error
+        fatal error: all goroutines are asleep - deadlock!
+    */
+}
+
+func main() {
+
+    ch := make(chan int, 10)
+    go fibonacci(cap(ch), ch)
+    for i := range ch { // received from the channel 
+        fmt.Println(i)
+    }
+}
+
+```
+
+Select 
+
+The `select` statement lets a goroutine wait on multiple communication operations.
+
+A `select` block until one of its cases can run, then it executes that case. It choose one at random if multiple are ready.
+
+```
+pack main
+
+func fibonacci(ch, quit chan int) {
+    x, y := 0, 1
+    // for {} 一直循环，会堵塞在这执行
+    for {
+        select {
+            case ch <- x:
+                x, y := y, x+y
+            case <-quit:
+                fmt.Println("quit")
+                return
+        }
+    }
+}
+
+func main() {
+    ch := make(chan int)
+    quit := make(chan int)
+    go func() { // 开一个 goroutine
+        for i := 0; i < 10; i++ {
+            fmt.Println(<-ch)
+        }
+        quit <- 0
+    }()
+    fibonacci(ch, quit) // 调用函数
+}
+```
+
+Default seletion
+
+The `default` case in a `select` is run if no other case is ready.
+
+Use a `default` case to try a send or receive without blocking:
+
+```
+select {
+    case i := <-c:
+        // use i
+    default:
+        // receiving from c would block
+}
+
+```
+default-selection.go
+```
+package main
+
+func main() {
+
+    tick := time.Tick(100 * time.Millisecond)
+    boom := time.After(500 * time.Millisecond)
+    for {
+        select {
+            case <-tick:
+                fmt.Println("tick.")
+            case <-boom:
+                fmt.Println("BOOM!")
+                return
+            default: // ---100---100---100---100---100
+                fmt.Println("     .")
+                time.Sleep(50 * time.Millisecond) // 2 * 50 ms  10 * 50 ms
+
+        }
+    }
+}
+/*
+在 100 ms 处，
+500 ms 后，
+
+在执行 time.Tick(100 * time.Millisecond) 和 time.After(500 * time.Millisecond) 这两者 case 前，都是在执行 default case。
+
+*/
+
+```
+
+Exercise: Equivalent Binary Trees
+
+There cann be many different binary trees with the same sequence of values stored in it. For example, here are two binary trees storing the sequence 1, 1, 2, 3, 5, 8, 13.
+
+![binary-tree](./snapshots/binary-tree.png)
+
+A function to check whether two binary trees store the same sequence is quite complex in most language. We'll use Go's concurrency and channels to write a simple solution.
+
+This example uses the `tree` package, which defines the type:
+
+```
+type Tree struct {
+    Left *Tree
+    Value int
+    Right *Tree
+}
+```
+1. Implement the `walk` function
+2. Test the `walk` function
+
+The function `tree.New(k)` constructs a randomly-structured (but always sorted) binary tree holding the values `k, 2k, 3k, ..., 10k`.
+
+
 
 ---
 Built-in
