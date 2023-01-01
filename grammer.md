@@ -1770,7 +1770,85 @@ type Tree struct {
 
 The function `tree.New(k)` constructs a randomly-structured (but always sorted) binary tree holding the values `k, 2k, 3k, ..., 10k`.
 
+Create a new channel `ch` and kick off the walker:
 
+```
+go Walk(tree.New(1), ch)
+```
+Then read and print 10 values from the channel. It should be the numbers 1, 2, 3, ..., 10.
+
+3. Implement the `same` function using `walk` to determine whether `t1` and `t2` store the same values.
+
+4. Test the `Same` function.
+
+`Same(tree.New(1)), tree.New(`)` should return true, and `Same(tree.New(1), tree.New(2))` should return false.
+
+```
+func Walk(t *tree.Tree, ch int) {
+    var worker func(t *tree.Tree)
+    worker = func(t *tree.Tree) {
+        if t.Left != nil {
+            worker(t.Left)
+        }
+        ch <- t.Value
+        if t.Right != nil {
+            worker(t.Right)
+        }
+    }
+    worker(r)
+    close(ch)
+}
+```
+sync.Mutex
+
+We've seen how channels are great for communication among goroutines.
+
+But what if we don't need communication? What if we just want to make sure only one goroutine can access a variable at a time to avoid conflicts?
+
+[mutual exclusion, 互斥] This concept is called **mutual exclusion**, and the conventional name for the data structure that provides it is **mutex**.
+
+Go's standard library provides mutual exclusion with `sync.Mutex` and its two methods: `Lock`, `Unlock`.
+
+We can define a block of code to be executed in mutual exclusion by surrounding it with a call to `Lock` and `Unlock` as shown on the `Inc` method.
+
+We can also use `defer` to ensure the mutex will be unlocked as in the `Value` method.
+
+```
+type SafeCounter struct {
+    mu sync.Mutex
+    v map[string]int
+}
+
+// 对某键值做加一操作，先 Lock —— 加 1 —— 再 Unlock
+func (c *SafeCounter) Inc(k string)  {
+    c.mu.Lock()
+    c.v[key]++
+    c.mu.Unlock()
+}
+
+func (c *SafeCounter) Value(key string) int {
+    c.mu.Lock()
+    defer c.mu.Unlock()
+    return c.v[key]
+}
+
+func main() {
+    c := &SafeCounter{v: make(map[string]int)}
+
+    for i := 0; i < 1000; i++ {
+        go c.Inc("somekey") // what's the difference with c.Inc("somekey")
+    }
+    time.Sleep(time.Second)
+    fmt.Println(c.Value("somekey"))
+}
+
+```
+
+Exercise: Web Crawler
+
+In this exercise you'll use Go's concurrency features to parallelize a web crawler.
+
+Modify the `Crawl` function to fetch URLS in parallel without fetching the same URL twice.
 
 ---
 Built-in
