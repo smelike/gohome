@@ -8,8 +8,9 @@ import (
 /*
 	1/ map 不是并发安全的
 	2/ func main() 中的 goroutine 执行结束了，则其他所有的 goroutine 都将会结束，即因此而无法运行。
+	// var fetchedUrl map[string]bool
 */
-// var fetchedUrl map[string]bool
+
 type Cache struct {
 	url map[string]bool
 	mu  sync.Mutex
@@ -63,6 +64,14 @@ func Crawl(url string, depth int, fetcher Fetcher) {
 	return
 }
 
+/*
+Add adds delta, which may be negative, to the WaitGroup counter. If the counter becomes zero, all goroutines blocked on Wait are released. If the counter goes negative, Add panics.
+
+Note that calls with a positive delta that occur when the counter is zero must happen before a Wait.
+Calls with a negative delta, or calls with a positive delta that start when the counter is greater than zero, may happen at any time.
+Typically this means the calls to Add should execute before the statement creating the goroutine or other event to be waited for.
+If a WaitGroup is reused to wait for several independent sets of events, new Add calls must happen after all previous Wait calls have returned. See the WaitGroup example.
+*/
 func main() {
 	wg.Add(1)
 	Crawl("https://golang.org/", 4, fetcher)
