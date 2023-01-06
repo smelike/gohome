@@ -1,1 +1,13 @@
-A Page not fouund..
+A Page not found..
+
+The closure returned by makeHandler is a function that takes an http.ResponseWriter and http.Request (in other words, an http.HandlerFunc). The closure extracts the title from the request path, and validates it with the validPath regexp. If the title is invalid, an error will be written to the ResponseWriter using the http.NotFound function. If the title is valid, the enclosed handler function fn will be called with the ResponseWriter, Request, and title as arguments.↳
+
+Now we can wrap the handler functions with makeHandler in main, before they are registered with the http package:
+func main() {
+    http.HandleFunc("/view/", makeHandler(viewHandler))
+    http.HandleFunc("/edit/", makeHandler(editHandler))
+    http.HandleFunc("/save/", makeHandler(saveHandler))
+
+    log.Fatal(http.ListenAndServe(":8080", nil))
+}
+Finally w
