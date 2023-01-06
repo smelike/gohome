@@ -243,3 +243,8 @@ visistAll := func(items []string) {
     // ...
 }
 ```
+
+
+### 5.6.1 Caveat: Capturing Iteration Variables
+
+All storage location, not its value at that particular moment. The value of dir is updated in successive iteration, so by the time the cleanup functions are called, the dir variable has been updated several times by the now-completed for loop.

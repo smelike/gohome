@@ -20,3 +20,6 @@ Exercise 5.8: Modify forEachNode so that the pre and post functions return a boo
 
 Exercise 5.9: Write a function expand(s string, f func(string) string) string that replace each substring "$foo" within s by the text returned by f("foo").
 
+
+Exercise 5.10: Rewrite topoSort to use maps insteaad of slices and eliminate the initial sort. Verify that the results, though nondeterministic, are valid topological orderings.
+
