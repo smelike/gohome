@@ -23,3 +23,14 @@ Exercise 5.9: Write a function expand(s string, f func(string) string) string th
 
 Exercise 5.10: Rewrite topoSort to use maps insteaad of slices and eliminate the initial sort. Verify that the results, though nondeterministic, are valid topological orderings.
 
+Exercise 5.15: Write variadic functions max and min, analogous to sum. What should these functions do when called with no arguments? Write variants that require at least one argument.
+
+Exercise 5.16: Write a variadic version of strings.Join.
+
+Exercise 5.17: Write a variadic function ElementsByTagName that, given an HTML node tree and zero or more names, returns all the elements that match one of those names. Here are two example calls:
+```
+func ElementsByTagName(doc *html.Node, name ...string) []*html.Node
+
+images := ElementByTagName(doc, "img")
+headings := ElementByTagName(doc, "h1", "h2", "h3", "h4")
+```
