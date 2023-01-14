@@ -633,4 +633,17 @@ composite, 组合的？合成的？
 
 
 
+## ch6
 
+一个 struct 类型也可能会有多个匿名字段。我们将 ColoredPoint 定义为下面这样：
+
+
+```
+type ColorPoint struct {
+    Point
+    color.RGBA
+}
+```
+然后这种类型的值便会拥有 Point 和 RGBA 类型的所有方法，以及直接定义在 ColoredPoint 中的方法。当编译器解析一个选择器到方法时，比如 p.ScaleBy，它会首先去找[直接定义]在这个类型里的 ScaleBy 方法，然后找被 ColoredPoint 的内嵌字段们引入的方法，然后去找 Point 和 RGBA 的内嵌字段引入的方法，然后一直递归向下找。如果选择器有二义性的话编译器会报错，比如你在同一级里有两个同名的方法。
+
+方法只能在命名类型（像Point）或者指向类型的指针上定义，但是多亏了内嵌，有些时候我们给匿名 struct 类型来定义方法也有了手段。
